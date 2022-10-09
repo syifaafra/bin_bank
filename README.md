@@ -21,9 +21,9 @@ ummm… gatau (tambahin ini please)
 - History (maybe) berupa card
 - About page (Lokasi bank sampah)
 - Deposit Sampah
-- Hitung harga
+	- Hitung harga
 	- Pemilihan bank sampah
-Jumlah penerimaan sampah
+- Jumlah penerimaan sampah
 
 ## Role atau peran pengguna 
 
