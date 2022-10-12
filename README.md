@@ -13,7 +13,7 @@ https://bin-bank.herokuapp.com
 
 ## Cerita Aplikasi
 
-ummm… gatau (tambahin ini please)
+Masalah sampah di Indonesia masih menjadi polemik hingga menjadi salah satu isu penting dalam Presidensi G20 Indonesia 2022. Jumlah dan jenis sampah terus bertambah seiring pertumbuhan penduduk dan perkembangan teknologi, tetapi laju solusi pengelolaan sampah masih tertinggal jauh di belakang. Bank Sampah merupakan salah satu solusi pengumpulan dan pengelolaan sampah yang melibatkan sistem seperti perbankan, tetapi yang ditabung bukanlah uang melainkan sampah. Nasabah yang merupakan masyarakat yang ingin mengirimkan sampahnya akan memiliki buku tabungan dan dapat meminjam uang yang nantinya akan dikembalikan dengan limbah sampah senilai uang yang dipinjam. Bin-Bank hadir sebagai aplikasi berbasis web yang bertujuan untuk mendukung kegiatan operasional bank sampah di seluruh Indonesia. Aplikasi ini memudahkan masyarakat untuk memperolah informasi secara efisien mengenai bank sampah dan membantu penggunanya untuk dapat mengirim sampah ke Bank Sampah terdekat. 
 
 ## Daftar Modul yang akan diimplementasikan 
 
