@@ -5,7 +5,7 @@
 - Kausar Meutuwah - 2106630100
 - Rafi Ghalibin Abrar - 2106751354
 - Syifa Afra Kamila Mumtaz - 2106707151
-- Muhammad Valensi Azmi - 2106630334
+- Muhammad Falensi Azmi - 2106630334
 - Amanda Christie Tarigan - 2106751322 
 
 ## 🌐 Tautan 🌐
