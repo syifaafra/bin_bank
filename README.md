@@ -29,7 +29,7 @@ Masalah sampah di Indonesia masih menjadi polemik hingga menjadi salah satu isu 
 
 **3. Leaderboard 	: Muhammad Falensi Azmi**
 
-   -> Peringkat user berdasarkan total sampah yang dikirim
+   -> Menampilkan peringkat user berdasarkan total sampah yang dikirim
 
 **4. History		: Rafi Ghalibin Abrar**
 
@@ -37,7 +37,7 @@ Masalah sampah di Indonesia masih menjadi polemik hingga menjadi salah satu isu 
 
 **5. Deposit Sampah	: Kausar Meutuwah**
 
-   -> Hitung jumlah sampah dan harganya, pemilihan bank sampah
+   -> Menghitung jumlah sampah dan harganya, memilih bank sampah
 
 ## 👥 Role atau Peran Pengguna 👥
 
