@@ -28,4 +28,5 @@ Masalah sampah di Indonesia masih menjadi polemik hingga menjadi salah satu isu 
 ## 👥 Role atau Peran Pengguna 👥
 
 Donatur Sampah : Mengetahui informasi lokasi bank sampah, membantu mengelola sampah, meningkatkan semangat untuk menjaga kebersihan
+
 Masyarakat (tidak perlu log in) : Mengetahui jumlah penerimaan sampah bin_bank,  Mengetahui informasi lokasi bank sampah, meningkatkan semangat untuk menjaga kebersihan
