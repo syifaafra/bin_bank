@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+        <h1 class="p3">Tugas 4 Assignment PBP/PBD</h1>
+    </a>
+    <a>
+        <div>
+            <h4>Nama: </h4>
+            <h5>{{username}}</h5>
+        </div>
+        <a href="{% url 'todolist:logout_user' %}" class="btn btn-primary">Logout</a>
+    </a>
+</nav>
+
+
+<div class="container py-5 h-100"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" 
+  integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+  crossorigin="anonymous">
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+    showDefault()
+  })
+
+  function showDefault(){
+    var container = document.getElementsByClassName("container py-5 h-100")[1]
+    container.innerHTML = ""
+
+    $.get("{% url 'bin_bank:show_json' %}", function (data) {
+    
+    data.forEach(element => {
+      var card = document.createElement("div")
+      card.className = "card mb-3 py-0"
+      
+      var cardContent = document.createElement("div")
+      cardContent.className = "row g-0 d-flex align-items-center justify-content-center"
+      
+      var cardBody = document.createElement("div")
+      cardBody.className = "card-body py-5 px-md-5"
+    
+      var fields = element.fields
+      var user = fields.user 
+      var date = fields.date 
+      var amountKg = fields.amountKg 
+      var branchName = fields.branchName 
+      var points = fields.points 
+      var status = fields.status 
+
+      var cardHeader = document.createElement("h2")
+      cardHeader.className = "card-title"
+      cardHeader.innerHTML = title + " (" + date.substring(0,date.indexOf("T")) + ")" 
+
+      var cardText = document.createElement("p")
+      cardText.className = "card-text"
+      cardText.innerHTML = desc 
+      
+      var cardStatus = document.createElement("h5")
+      cardStatus.className = "card-text"
+      if (condition) {
+        
+      } else if (condition) {
+        
+      }else{
+        
+      }
+      cardStatus.innerHTML = (is_finished) ? 'Sudah' : 'Belum' 
+
+      
+      cardBody.appendChild(cardHeader)
+      cardBody.appendChild(cardText)
+      cardBody.appendChild(cardStatus)
+
+      cardContent.appendChild(cardBody)
+      card.appendChild(cardContent)
+      container.appendChild(card)
+
+      document.body.appendChild(container)
+      }); 
+    })
+
+    
+  }
+  
+  
+  
+    
+
+</script>
+
+</section>
+{% endblock content %}
