@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+    <!--bikin judul-->
+    <title>{{ user.username }}! | Todolist</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $( "form#modal-form" ).submit(function( event ) {
+                event.preventDefault();
+
+                var actionurl = event.currentTarget.action;
+
+                $.ajax({
+                    url: actionurl,
+                    type: 'post',
+                    dataType: 'json',
+                    data: $("form#modal-form").serialize(),
+                    success: function(data) {
+                        let card_div = $('<div></div>')
+                            .addClass('card p-1 m-4 shadow-lg')
+
+                        let card_title = $('<div class="title-status"></div>')
+                            .append($('<p class="card-title"></p>')
+                                .append(data.title))
+                            .append($('<span></span>')
+                                .addClass('badge rounded-pill align-top')
+                                .addClass(data.is_finished ? 'bg-success' : 'bg-danger')
+                                .text(data.is_finished ? 'Finished' : 'Not Finished'))
+
+                        let card_body = $('<div class="card-body"></div>')
+                            .append(card_title)
+                            .append($('<p class="card-text">' + data.description + '</p>'))
+                            .append($('<p><small class="card-subtitle mb-2 text-muted">Created on: ' + data.date + '</small></p>'));
+
+                        let card_button = $('<div class="row m-2">')
+                            .append($(`<a class="col btn btn-info m-2" href="/todolist/toggle-task/${data.pk}" >Change status</a>`))
+                            .append($(`<a class="col btn btn-danger m-2" href="/todolist/delete-task/${data.pk}" >Delete task</a>`));
+
+                        $("#card-list").append(card_div.append(card_body).append(card_button));
+                    }
+
+                    ,
+                    error: function(){
+                        alert("ERROR");
+                    }
+                });
+            });
+
+            show_tasks();
+        });
+
+        function show_tasks() {
+            $.get("./json", data => {
+                data.forEach(element => {
+                    let data = element.fields
+                    console.log(element)
+                    let card_div = $('<div></div>')
+                        .addClass('card p-1 m-4 shadow-lg')
+
+                    let card_title = $('<div class="title-status"></div>')
+                        .append($('<p class="card-title"></p>')
+                            .append(data.title))
+                        .append($('<span></span>')
+                            .addClass('badge rounded-pill align-top')
+                            .addClass(data.is_finished ? 'bg-success' : 'bg-danger')
+                            .text(data.is_finished ? 'Finished' : 'Not Finished'))
+
+                    let card_body = $('<div class="card-body"></div>')
+                        .append(card_title)
+                        .append($('<p class="card-text">' + data.description + '</p>'))
+                        .append($('<p><small class="card-subtitle mb-2 text-muted">Created on: ' + data.date + '</small></p>'));
+
+                    let card_button = $('<div class="row m-2">')
+                        .append($(`<a class="col btn btn-info m-2" href="/todolist/toggle-task/${element.pk}" >Change status</a>`))
+                        .append($(`<a class="col btn btn-danger m-2" href="/todolist/delete-task/${element.pk}" >Delete task</a>`));
+
+                    $("#card-list").append(card_div.append(card_body).append(card_button));
+                });
+            });
+        }
+    </script>
+{% endblock meta %}
+
+{% block navbar %}
+
+    <a class="btn btn-danger m-2" href="{% url 'todolist:logout' %}" role="button">Logout</a>
+
+{% endblock navbar %}
+
+{% block content %}
+    <h1 class="h1 p-2 m-2 fw-bold">Halo, HALOOOOO</h1>
+
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add Task</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Task</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="./add/" class="form-create-task" id="modal-form">
+                        {% csrf_token %}
+                        <!-- <label for="id_title">Title:</label> -->
+                        <input type="text" name="title" placeholder="Title" maxlength="128" required="" id="id_title"
+                               class="form-control">
+
+                        <!-- <label for="id_description">Description:</label> -->
+                        <textarea name="description" placeholder="Description" cols="40" rows="10" required=""
+                                  id="id_description" class="form-control"></textarea>
+
+                        <input class="btn btn-primary mt-3" style="width: 100%;" type="submit" name="submit" value="Create"
+                               data-bs-dismiss="modal"/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="card-list">
+
+        {% comment %}
+        {% endcomment %}
+
+    </div>
+
+
+{% endblock content %}

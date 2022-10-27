@@ -69,4 +69,4 @@ def show_transaction_user_failed(request):
 
 
 def deposit_sampah(request):
-    return render(request, "test_page.html")
+    return render(request, "deposit_sampah.html")
