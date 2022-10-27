@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+{% load static %}
+<!-- Navbar -->
+<nav class="navbar bg-custom-navbar">
+    <div class="container">
+      <a class="navbar-brand mb-0 h1" href="#" style="color:white"> 
+        To Do List Page 
+    </a>
+      </div>
+</nav>
+<section class="main">
+	<div class="layer">
+
+        <h1>Login</h1>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="mx-auto card align-items-center  text-white bg-custom-navbar mb-3 w-50 " >
+                <div class="card-body">
+                        <table>
+                            <tr>
+                                <td>Username: </td>
+                                <td><input type="text" name="username" placeholder="Username" class="form-control"></td>
+                            </tr>
+                                    
+                            <tr>
+                                <td>Password: </td>
+                                <td><input type="password" name="password" placeholder="Password" class="form-control"></td>
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td><input class="btn login_btn" type="submit" value="Login"></td>
+                            </tr>
+                        </table>
+                        Belum mempunyai akun? <a href="{% url 'todolist:register' %}">Buat Akun</a>
+                </div>
+            </div>
+        </form>
+    
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}     
+        
+     
+
+</div>
+
+{% endblock content %}
