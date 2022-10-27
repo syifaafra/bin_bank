@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
+
 def register(request):
     form = UserCreationForm()
     if request.method == "POST":
@@ -16,11 +17,13 @@ def register(request):
             messages.success(request, 'Akun telah berhasil dibuat!')
             return redirect('todolist:login')
 
-    context = {'form':form}
+    context = {'form': form}
     return render(request, 'register.html', context)
+
 
 def homepage(request):
     return render(request, "test_page.html")
+
 
 def login_user(request):
     if request.method == 'POST':
@@ -35,26 +38,35 @@ def login_user(request):
     context = {}
     return render(request, 'login.html', context)
 
+
 def logout_user(request):
     logout(request)
     return redirect('todolist:login')
+
 
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user(request):
     tasks = Transaction.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
 
+
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user_ongoing(request):
     tasks = Transaction.objects.filter(user=request.user, status=1)
     return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
+
 
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user_success(request):
     tasks = Transaction.objects.filter(user=request.user, status=2)
     return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
 
+
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user_failed(request):
     tasks = Transaction.objects.filter(user=request.user, status=3)
     return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
+
+
+def deposit_sampah(request):
+    return render(request, "test_page.html")

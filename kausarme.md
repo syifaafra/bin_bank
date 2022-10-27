@@ -18,9 +18,8 @@ sebagai tempat pengelolaan data.
 
 # Menerapkan responsive web.
 
-# Memiliki halaman form yang dapat menerima masukan dari pengguna kemudian diproses oleh views (contoh: insert ke dalam
-
-model, query dari model, update data di dalam model).
+# Memiliki halaman form yang dapat menerima masukan dari pengguna kemudian diproses oleh views 
+(contoh: insert ke dalam model, query dari model, update data di dalam model).
 
 # Menerapkan JavaScript dengan pemanggilan AJAX.
 
