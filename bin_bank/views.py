@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from bin_bank.models import Transaction
 from django.http import HttpResponse
 from django.core import serializers
@@ -15,9 +15,12 @@ def register(request):
             form.save()
             messages.success(request, 'Akun telah berhasil dibuat!')
             return redirect('todolist:login')
-    
+
     context = {'form':form}
     return render(request, 'register.html', context)
+
+def homepage(request):
+    return render(request, "test_page.html")
 
 def login_user(request):
     if request.method == 'POST':
@@ -25,7 +28,7 @@ def login_user(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user) 
+            login(request, user)
             return redirect('todolist:show_todo')
         else:
             messages.info(request, 'Username atau Password salah!')

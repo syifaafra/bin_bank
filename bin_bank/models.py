@@ -4,10 +4,17 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 
+
 class Transaction(models.Model):
-    user =  models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     date = models.DateTimeField(default=datetime.now())
-    amountKg =  models.IntegerField()
+    amountKg = models.IntegerField()
     branchName = models.CharField(max_length=255)
     points = models.IntegerField()
-    status  = models.IntegerField()
+    status = models.IntegerField()
+
+
+class Orderan(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    date = models.DateTimeField(default=datetime.now())
+    id = models.ForeignKey()
