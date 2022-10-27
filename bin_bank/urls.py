@@ -1,12 +1,12 @@
 from django.urls import path
 from bin_bank.views import login_user, register, logout_user, show_transaction_user, show_transaction_user_ongoing, \
     show_transaction_user_success, show_transaction_user_failed
-from bin_bank.views import homepage, deposit_sampah
+from bin_bank.views import home, deposit_sampah
 
 app_name = 'bin_bank'
 
 urlpatterns = [
-    path('', homepage, name='homepage'),  # TODO : homepage
+    path('', home, name='home'),  # TODO : homepage
     path('login/', login_user, name='login'),
     path('register/', register, name='register'),
     path('logout/', logout_user, name='logout'),
