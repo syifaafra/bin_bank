@@ -20,7 +20,7 @@ def register(request):
     return render(request, 'register.html', context)
 
 def homepage(request):
-    return render(request, "test_page.html")
+    return render(request, "home.html")
 
 def login_user(request):
     if request.method == 'POST':
