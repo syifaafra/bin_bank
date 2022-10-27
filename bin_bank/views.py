@@ -22,7 +22,7 @@ def register(request):
 
 
 def homepage(request):
-    return render(request, "test_page.html")
+    return render(request, "home.html")
 
 
 def login_user(request):
