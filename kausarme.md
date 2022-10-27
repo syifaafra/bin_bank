@@ -4,7 +4,10 @@ File Markdown ini mediskripsikan bagaimana saya mengimplementasikan modul Deposi
 
 # Impelementasi Kausar Meutuwah
 
-# Menerapkan Model Orderan
+## Persiapan Awal
+Untuk awal 
+
+## Menerapkan Model Orderan
 
 Menerapkan models Orderan sendiri
 
@@ -14,14 +17,25 @@ Menerapkan Foreign Key
 menerapkan foreign key atau inheritance pada model, dan sudah mengonfigurasi Django Admin
 sebagai tempat pengelolaan data.
 
-# Menerapkan views Deposit Sampah
+## Menerapkan views Deposit Sampah
+Membuat halaman dasar dengan mengextend dari base.html
+```html
+{% extend base.html %} 
+```
+Membuat Form yang diperlukan 
 
-# Menerapkan responsive web.
+Menampilkan data yang diperlukan
 
-# Memiliki halaman form yang dapat menerima masukan dari pengguna kemudian diproses oleh views 
+Ubah Form sehingga menampilkan dengan modals
+
+## Menerapkan responsive web
+Tambahkan bootsrap class pada bagian yang perlu ditambahkan 
+
+
+## Memiliki halaman form yang dapat menerima masukan dari pengguna kemudian diproses oleh views 
 (contoh: insert ke dalam model, query dari model, update data di dalam model).
 
-# Menerapkan JavaScript dengan pemanggilan AJAX.
+## Menerapkan JavaScript dengan pemanggilan AJAX.
 
 Menerapkan filter informasi bagi pengguna yang sudah login saja (contoh: data alamat, umur, nomor HP hanya ditampilkan
 ketika sudah login saja).
