@@ -11,7 +11,7 @@ class Transaction(models.Model):
     amountKg = models.IntegerField()
     branchName = models.CharField(max_length=255)
     points = models.IntegerField()
-    status = models.IntegerField()
+    isFInished = models.BooleanField(default=False)
 
 
 class Orderan(models.Model):

@@ -10,7 +10,7 @@
             <h4>Nama: </h4>
             <h5>{{username}}</h5>
         </div>
-        <a href="{% url 'todolist:logout_user' %}" class="btn btn-primary">Logout</a>
+        <a href="{% url 'bin_bank:logout_user' %}" class="btn btn-primary">Logout</a>
     </a>
 </nav>
 
@@ -50,27 +50,26 @@
       var amountKg = fields.amountKg 
       var branchName = fields.branchName 
       var points = fields.points 
-      var status = fields.status 
+      var isFInished = fields.isFInished 
 
       var cardHeader = document.createElement("h2")
       cardHeader.className = "card-title"
-      cardHeader.innerHTML = title + " (" + date.substring(0,date.indexOf("T")) + ")" 
+      cardHeader.innerHTML = amountKg + " (" + date.substring(0,date.indexOf("T")) + ")" 
 
       var cardText = document.createElement("p")
       cardText.className = "card-text"
-      cardText.innerHTML = desc 
+      cardText.innerHTML = branchName + points
       
       var cardStatus = document.createElement("h5")
       cardStatus.className = "card-text"
-      if (condition) {
-        
-      } else if (condition) {
-        
-      }else{
-        
-      }
-      cardStatus.innerHTML = (is_finished) ? 'Sudah' : 'Belum' 
+      cardStatus.innerHTML = (is_finished) ? 'Berhasil' : 'Sedang Berlangsung' 
 
+      if (isFInished == false) {
+        var buttonUpdate = document.createElement("a")
+        buttonUpdate.href = "/bin_bank/update-task/" + element.pk
+        buttonUpdate.className = "btn btn-primary"
+        buttonUpdate.innerHTML = "Selesai"
+      }
       
       cardBody.appendChild(cardHeader)
       cardBody.appendChild(cardText)

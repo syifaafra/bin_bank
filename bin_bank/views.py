@@ -43,6 +43,23 @@ def logout_user(request):
     logout(request)
     return redirect('todolist:login')
 
+@login_required(login_url='/bin_bank/login/')
+def show_history(request):
+    context = {
+        'username': request.user.username,
+        'last_login': request.COOKIES['last_login'],
+    }
+    return render(request, "history.html", context)
+
+
+@login_required(login_url='/todolist/login/')
+def update_transaction(request, id):
+    task_list = Transaction.objects.filter(id=id)
+    task = task_list[0]
+    task.isFInished = True
+    task.save()
+    return redirect('bin_bank:show_history')
+
 
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user(request):
@@ -52,13 +69,13 @@ def show_transaction_user(request):
 
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user_ongoing(request):
-    tasks = Transaction.objects.filter(user=request.user, status=1)
+    tasks = Transaction.objects.filter(user=request.user, isFInished=False)
     return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
 
 
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user_success(request):
-    tasks = Transaction.objects.filter(user=request.user, status=2)
+    tasks = Transaction.objects.filter(user=request.user, isFInished=True)
     return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
 
 
