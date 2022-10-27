@@ -14,5 +14,4 @@ urlpatterns = [
     path('json/ongoing', show_transaction_user_ongoing, name='show_transaction_user_ongoing'),
     path('json/success', show_transaction_user_success, name='show_transaction_user_success'),
     path('json/failed', show_transaction_user_failed, name='show_transaction_user_failed'),
-
 ]
