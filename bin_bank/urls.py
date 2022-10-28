@@ -6,7 +6,7 @@ from bin_bank.views import homepage, deposit_sampah
 app_name = 'bin_bank'
 
 urlpatterns = [
-    path('', homepage, name='homepage'),  # TODO : homepage
+    path('', main, name='main'),  #TODO : homepage 
     path('login/', login_user, name='login'),
     path('register/', register, name='register'),
     path('logout/', logout_user, name='logout'),
