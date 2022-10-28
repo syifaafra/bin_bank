@@ -3,21 +3,24 @@ from bin_bank.models import Transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.core import serializers
-from django.contrib.auth.forms import UserCreationForm
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from bin_bank.models import Article, Feedback
-from bin_bank.forms import FeedbackForm
+from bin_bank.forms import FeedbackForm, RegisterForm
 
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def register(request):
-    form = UserCreationForm()
+    form = RegisterForm()
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Akun telah berhasil dibuat!')
-            return redirect('todolist:login')
+            return redirect('bin_bank:login')
 
     context = {'form': form}
     return render(request, 'register.html', context)
@@ -46,7 +49,7 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('todolist:show_todo')
+            return redirect('bin_bank:home')
         else:
             messages.info(request, 'Username atau Password salah!')
     context = {}
@@ -55,7 +58,7 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('todolist:login')
+    return redirect('bin_bank:login')
 
 @login_required(login_url='/bin_bank/login/')
 def show_history(request):
@@ -66,7 +69,7 @@ def show_history(request):
     return render(request, "history.html", context)
 
 
-@login_required(login_url='/todolist/login/')
+@login_required(login_url='/bin_bank/login/')
 def update_transaction(request, id):
     task_list = Transaction.objects.filter(id=id)
     task = task_list[0]
