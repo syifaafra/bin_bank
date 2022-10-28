@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import datetime, timezone
 from django.utils import timezone
 from xmlrpc.client import MAXINT, MININT
 from django.db import models
@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    date = models.DateTimeField(default=timezone.now())
+    date = models.DateTimeField(default=datetime.now())
     amountKg = models.IntegerField()
     branchName = models.CharField(max_length=255)
     isFinished = models.BooleanField(default=False)
