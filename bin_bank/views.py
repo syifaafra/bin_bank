@@ -4,21 +4,24 @@ from bin_bank.models import Transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.core import serializers
-from django.contrib.auth.forms import UserCreationForm
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from bin_bank.models import Article, Feedback
-from bin_bank.forms import FeedbackForm
+from bin_bank.forms import FeedbackForm, RegisterForm
 
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def register(request):
-    form = UserCreationForm()
+    form = RegisterForm()
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Akun telah berhasil dibuat!')
-            return redirect('todolist:login')
+            return redirect('bin_bank:login')
 
     context = {'form': form}
     return render(request, 'register.html', context)
@@ -47,7 +50,7 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('todolist:show_todo')
+            return redirect('bin_bank:home')
         else:
             messages.info(request, 'Username atau Password salah!')
     context = {}
@@ -58,7 +61,7 @@ def logout_user(request):
     logout(request)
     return redirect('bin_bank:login')
 
-# @login_required(login_url='/bin_bank/login/')
+@login_required(login_url='/bin_bank/login/')
 def show_history(request):
     # context = {
     #     'username': request.user.username,
@@ -67,7 +70,8 @@ def show_history(request):
     return render(request, "history.html")
 
 
-#@login_required(login_url='/bin_bank/login/')
+
+@login_required(login_url='/bin_bank/login/')
 def update_transaction(request, id):
     transaction_list = Transaction.objects.filter(id=id)
     transaction = transaction_list[0]
@@ -76,7 +80,7 @@ def update_transaction(request, id):
     return redirect('bin_bank:show_history')
 
 
-#@login_required(login_url='/bin_bank/login/')
+@login_required(login_url='/bin_bank/login/')
 def show_transaction_user(request):
     transactions = Transaction.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
@@ -94,7 +98,7 @@ def show_transaction_user_success(request):
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-#@login_required(login_url='/bin_bank/login/')
+@login_required(login_url='/bin_bank/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
         transactions = Transaction.objects.filter(amountKg__range=(request.POST["Min"], request.POST["Max"]))
