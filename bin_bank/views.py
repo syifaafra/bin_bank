@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from bin_bank.models import Transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.core import serializers
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-
+from bin_bank.models import Article, Feedback
+from bin_bank.forms import FeedbackForm
 
 def register(request):
     form = UserCreationForm()
@@ -22,8 +24,20 @@ def register(request):
 
 
 def homepage(request):
-    return render(request, "home.html")
+    data_article = Article.objects.all()
+    form = FeedbackForm(request.POST)
 
+    if request.method == "POST":
+        if form.is_valid(): # Kondisi data pada field valid
+            feedback = Feedback(
+                feedback = form.cleaned_data['feedback'],
+            )
+            feedback.save() # Menyimpan feedback ke database
+            return HttpResponseRedirect(reverse("bin_bank:homepage"))
+        else:
+            form = FeedbackForm()
+
+    return render(request, 'home.html', {'articles': data_article, 'form': form})
 
 def login_user(request):
     if request.method == 'POST':
