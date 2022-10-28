@@ -21,7 +21,7 @@ def register(request):
     return render(request, 'register.html', context)
 
 
-def home(request):
+def homepage(request):
     return render(request, "home.html")
 
 
