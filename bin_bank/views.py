@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from django.shortcuts import render, redirect
 from bin_bank.models import Transaction
 from django.http import HttpResponse, HttpResponseRedirect
@@ -62,44 +63,47 @@ def logout_user(request):
 
 @login_required(login_url='/bin_bank/login/')
 def show_history(request):
-    context = {
-        'username': request.user.username,
-        'last_login': request.COOKIES['last_login'],
-    }
-    return render(request, "history.html", context)
+    # context = {
+    #     'username': request.user.username,
+    #     'last_login': request.COOKIES['last_login'],
+    # }
+    return render(request, "history.html")
+
 
 
 @login_required(login_url='/bin_bank/login/')
 def update_transaction(request, id):
-    task_list = Transaction.objects.filter(id=id)
-    task = task_list[0]
-    task.isFInished = True
-    task.save()
+    transaction_list = Transaction.objects.filter(id=id)
+    transaction = transaction_list[0]
+    transaction.isFinished = True
+    transaction.save()
     return redirect('bin_bank:show_history')
 
 
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user(request):
-    tasks = Transaction.objects.filter(user=request.user)
-    return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
+    transactions = Transaction.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user_ongoing(request):
-    tasks = Transaction.objects.filter(user=request.user, isFInished=False)
-    return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
+    transactions = Transaction.objects.filter(user=request.user, isFInished=False)
+    return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
 @login_required(login_url='/bin_bank/login/')
 def show_transaction_user_success(request):
-    tasks = Transaction.objects.filter(user=request.user, isFInished=True)
-    return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
+    transactions = Transaction.objects.filter(user=request.user, isFInished=True)
+    return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
 @login_required(login_url='/bin_bank/login/')
-def show_transaction_user_failed(request):
-    tasks = Transaction.objects.filter(user=request.user, status=3)
-    return HttpResponse(serializers.serialize("json", tasks), content_type="application/json")
+def show_transaction_user_range(request):
+    if request.method == "POST":
+        transactions = Transaction.objects.filter(amountKg__range=(request.POST["Min"], request.POST["Max"]))
+        return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+    return HttpResponse("Invalid method", status_code=405)
 
 
 def deposit_sampah(request):
