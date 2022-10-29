@@ -1,14 +1,14 @@
 from asyncio.windows_events import NULL
 from django.shortcuts import render, redirect
 from bin_bank.models import Transaction
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.core import serializers
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from bin_bank.models import Article, Feedback
+from bin_bank.models import Article, Feedback, MyUser
 from bin_bank.forms import FeedbackForm, RegisterForm
 
 from django.views.decorators.csrf import csrf_exempt
@@ -115,3 +115,11 @@ def show_transaction_user_range(request):
 
 def deposit_sampah(request):
     return render(request, "deposit_sampah.html")
+
+def show_leaderboard(request):
+    user_data = MyUser.objects.all().order_by('-points')
+    return HttpResponse(serializers.serialize("json", user_data), content_type="application/json")
+
+def leaderboard(request):
+    context = {}
+    return render(request, "leaderboard.html", context)
