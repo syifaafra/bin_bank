@@ -3,10 +3,18 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from django.utils import timezone
+<<<<<<< HEAD
+from xmlrpc.client import MAXINT, MININT
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
+from django.db import models
+=======
 
 from project_django import settings
 
 User = settings.AUTH_USER_MODEL
+>>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e
 
 
 class Transaction(models.Model):
@@ -71,15 +79,25 @@ class MyUser(AbstractBaseUser):
 
 
 class Article(models.Model):
-    title = models.CharField(max_length=30)
-    thumbnail = models.CharField(max_length=50)
+    title = models.CharField(max_length=100)
     slug = models.SlugField()
     intro = models.TextField()
+<<<<<<< HEAD
+    publish_date = models.DateField()
+    content = models.TextField()
+=======
     image = models.CharField(max_length=500)
     news = models.TextField()
+>>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e
     source = models.TextField()
 
 
 class Feedback(models.Model):
+<<<<<<< HEAD
+    date = models.DateTimeField(auto_now_add=True)
+    feedback = models.TextField()
+
+=======
     date = models.DateTimeField(default=timezone.now())
     feedback = models.TextField()
+>>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e
