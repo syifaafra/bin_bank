@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+<!doctype html>
+<html lang="en">
+
+{% block meta %}
+<head>
+{% load static %}
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'bin_bank.css' %}">
+
+<title>Home</title>
+</head>
+{% endblock meta %}
+
+{% block content %}
+<body data-bs-spy="scroll" data-bs-target=".navbar">
+
+    <!--navbar-->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white" data-aos="fade-down">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'bin_bank:homepage' %}">BIN BANK.</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'bin_bank:homepage' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="">Leaderboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'bin_bank:deposit_sampah' %}">Donate</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'bin_bank:show_history' %}">History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'bin_bank:login' %}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Welcome Section -->
+    <section id="home" class="bg-cover hero-section" style="background-image: url(img/cover_1.jpg);">
+        <div class="overlay"></div>
+        <div class="container text-white text-center">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="display-4" data-aos="zoom-in">Welcome to Bin Bank</h1>
+                    <p class="my-4" data-aos="fade-up">Bin Bank is a web-based application that supports the operational activities of all Waste Banks in Indonesia.<br>
+                        Join us to promote and protect our public's health and environment. </p>
+                    <a href="#services" data-aos="fade-up" class="btn btn-main">Get started</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Us Section -->
+    <section id="services" class="text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 section-intro text-center" data-aos="fade-up">
+                    <h1>Why Us?</h1>
+                    <div class="divider"></div>
+                    <p>There are many variations of passages of Lorem Ipsum available, but the majority have
+                        suffered<br>
+                        alteration in some form, by injected humour, or randomised words which don't look even slightly
+                    </p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="zoom-in">
+                    <div class="service">
+                        <div class="service-img">
+                            <img src="" alt="">
+                            <div class="icon"><i class="icon-browser"></i></div>
+                        </div>
+                        <h5 class="mt-5 pt-4">Practical</h5>
+                        <p>Data management is done digitally & can increase paperless activity</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="zoom-in">
+                    <div class="service">
+                        <div class="service-img">
+                            <img src="" alt="">
+                            <div class="icon"><i class="icon-bargraph"></i></div>
+                        </div>
+                        <h5 class="mt-5 pt-4">National integrated</h5>
+                        <p>The integrated Bin Bank data has been integrated nationally, thus facilitating the process of monitoring waste management</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="zoom-in">
+                    <div class="service">
+                        <div class="service-img">
+                            <img src="" alt="">
+                            <div class="icon"><i class="icon-camera"></i></div>
+                        </div>
+                        <h5 class="mt-5 pt-4">Secured</h5>
+                        <p>Bin Bank guarantees the security of user data in conducting transactions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Why Us Section -->
+
+    <!-- Our Project Section -->
+    <section class="bg-cover text-white" style="background-image: url(img/cover_2.jpg);">
+        <div class="overlay"></div>
+        <h2>Articles</h2>
+        <p>Dive into your local chapter and explore how waste has been managed in your community.</p>
+    
+        <div class="row gy-4">
+            {% for article in articles %}
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="card-message">
+                <div class="row">
+                <div class="col-xl-5">
+                    <div class="card-bg"></div>
+                </div>
+                <div class="col-xl-7 d-flex align-items-center">
+                    <div class="card-body">
+                    <h4 class="card-title">{{article.title}}</h4>
+                    <p>{{article.publish_date}}</p>
+                    <p>{{article.intro}}</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
+    
+        </div>
+    </section>
+    <!-- End Our Project Section -->
+
+    <!-- Our Story -->
+    <section id="reviews" class="text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 section-intro text-center">
+                    <h1>Our Story </h1>
+                    <div class="divider"></div>
+                    <p> Here are some stories of people using Bin Bank to manage their waste. 
+                        <br> It's now your time to make one for the community and enviroment!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Our Story Section -->
+
+    <!-- Location Section -->
+    <section id="blog" class="bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 section-intro text-center" data-aos="fade-up">
+                    <h1>Where to Find Us</h1>
+                    <div class="divider"></div>
+                    <p>Find the nearest Waste Bank location integrated with us in your area
+                    </p>
+                </div>
+            </div>
+            <div class="embed-responsive embed-responsive-1by1">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15866.388933889108!2d106.86509012552966!3d-6.184622595466462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f5e2ecef5665%3A0x2625ad2508aa6f6f!2sBank%20Sampah%20Induk%20Jakarta%20Pusat!5e0!3m2!1sid!2sid!4v1666942404577!5m2!1sid!2sid" frameborder="0" style="border:0; width: 100%; height: 384px;" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+    <!-- End Location Section-->
+
+    <!-- Feedback  -->
+    <section id="contact" class="bg-cover text-white" style="background-image: url(img/cover_3.jpg);">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 section-intro text-center" data-aos="fade-up">
+                    <h1>Feedback</h1>
+                    <div class="divider"></div>
+                    <p>Share your experience in using Bin Bank to the community and help us to improve</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 mx-auto" data-aos="fade-up">
+                    <form action="#" class="row g-4">
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" placeholder="Full name">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="email" class="form-control" placeholder="Email address">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <input type="text" class="form-control" placeholder="Subject">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <textarea name="" id="" cols="30" rows="4" class="form-control" placeholder="Message"></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button class="btn btn-main" type="submit">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--footer-->
+    <footer class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">Copyright © 2022. Bin Bank</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div>
+                        <a href="#"><i class='bx bxl-facebook-circle'></i></a>
+                        <a href="#"><i class='bx bxl-twitter'></i></a>
+                        <a href="#"><i class='bx bxl-dribbble'></i></a>
+                        <a href="#"><i class='bx bxl-instagram'></i></a>
+                        <a href="#"><i class='bx bxl-github'></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+{% endblock content %}
+
+</html>
