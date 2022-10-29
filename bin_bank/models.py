@@ -5,7 +5,6 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class Transaction(models.Model):
@@ -22,15 +21,14 @@ class Profile(models.Model):
     points = models.IntegerField()
 
 class Article(models.Model):
-    title = models.CharField(max_length=30)
-    thumbnail = models.CharField(max_length=50)
+    title = models.CharField(max_length=100)
     slug = models.SlugField()
     intro = models.TextField()
-    image= models.CharField(max_length=500)
-    news = models.TextField()
+    publish_date = models.DateField()
+    content = models.TextField()
     source = models.TextField()
 
 class Feedback(models.Model):
-    date = models.DateTimeField(default=datetime.now())
+    date = models.DateTimeField(auto_now_add=True)
     feedback = models.TextField()
-    
+

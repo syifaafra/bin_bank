@@ -24,7 +24,7 @@
 <header id="header" class="header d-flex align-items-center">
 <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
 
-    <a href="{% url 'bin_bank:homepage' %}" class="logo d-flex align-items-center">
+    <a href="{% url 'bin_bank:home' %}" class="logo d-flex align-items-center">
     <h1>Bin Bank</h1>
     </a>
 
@@ -32,11 +32,11 @@
     <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
     <nav id="navbar" class="navbar">
     <ul>
-        <li><a href="{% url 'bin_bank:homepage' %}" class="active">Home</a></li>
+        <li><a href="{% url 'bin_bank:home' %}" class="active">Home</a></li>
         <li><a href="">Leaderboard</a></li>
         <li><a href="">Donate</a></li>
-        <li><a href="">History</a></li>
-        <li><a href="">Login</a></li>
+        <li><a href="{% url 'bin_bank:show_history' %}">History</a></li>
+        <li><a href="{% url 'bin_bank:login' %}" class="active">Login</a></li>
     </ul>
     </nav><!-- .navbar -->
 
@@ -46,16 +46,6 @@
 <!-- ======= Hero Section ======= -->
 <section id="hero" class="hero">
 
-<div class="info d-flex align-items-center">
-    <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 text-center">
-        <h2 data-aos="fade-down">Welcome to <br><span>Bin Bank</span></br></h2>
-        <p data-aos="fade-up">Bin Bank adalah aplikasi berbasis web yang bertujuan untuk mendukung kegiatan operasional Bank Sampah di seluruh Indonesia</p>
-        </div>
-    </div>
-    </div>
-</div>
 
 <div id="hero-carousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
 

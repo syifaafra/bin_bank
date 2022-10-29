@@ -1,13 +1,14 @@
+import json
 from django.shortcuts import render, redirect
 from bin_bank.models import Transaction
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.http import HttpResponse 
 from django.core import serializers
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from bin_bank.models import Article, Feedback
+from django.views.decorators.csrf import csrf_exempt
 from bin_bank.forms import FeedbackForm
 
 def register(request):
@@ -25,19 +26,26 @@ def register(request):
 
 def homepage(request):
     data_article = Article.objects.all()
-    form = FeedbackForm(request.POST)
+    return render(request, 'homepage.html', {'articles':data_article})
 
-    if request.method == "POST":
-        if form.is_valid(): # Kondisi data pada field valid
-            feedback = Feedback(
-                feedback = form.cleaned_data['feedback'],
-            )
-            feedback.save() # Menyimpan feedback ke database
-            return HttpResponseRedirect(reverse("bin_bank:homepage"))
-        else:
-            form = FeedbackForm()
+def article_detail(request, slug):
+    return render(request, "article_detail.html")
 
-    return render(request, 'home.html', {'articles': data_article, 'form': form})
+def feedback(request):     
+    data_feedback = Feedback.objects.all() 
+    data_article = Article.objects.all()
+    response = {'articles': data_article, 'data_feedback': data_feedback}
+    return render(request, 'feedback.html', response )
+
+@csrf_exempt
+def get_articles_json(request):
+    data_article = Feedback.objects.all()
+    return HttpResponse(serializers.serialize('json', data_article), content_type="application/json")
+
+@csrf_exempt
+def get_feedback_json(request):
+    data_feedback = Article.objects.all()
+    return HttpResponse(serializers.serialize('json', data_feedback), content_type="application/json")
 
 def login_user(request):
     if request.method == 'POST':
@@ -70,7 +78,7 @@ def show_history(request):
 def update_transaction(request, id):
     task_list = Transaction.objects.filter(id=id)
     task = task_list[0]
-    task.isFInished = True
+    task.isFinished = True
     task.save()
     return redirect('bin_bank:show_history')
 
