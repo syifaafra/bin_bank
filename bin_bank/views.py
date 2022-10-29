@@ -1,23 +1,16 @@
-<<<<<<< HEAD
 import json
-=======
 from asyncio.windows_events import NULL
->>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e
 from django.shortcuts import render, redirect
-from bin_bank.models import Transaction
-from django.http import HttpResponse 
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.urls import reverse 
 from django.core import serializers
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from bin_bank.models import Article, Feedback
-<<<<<<< HEAD
+from bin_bank.models import Article, Feedback, MyUser, Transaction
 from django.views.decorators.csrf import csrf_exempt
-from bin_bank.forms import FeedbackForm
-=======
 from bin_bank.forms import FeedbackForm, RegisterForm
->>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -40,10 +33,9 @@ def homepage(request):
     data_article = Article.objects.all()
     return render(request, 'homepage.html', {'articles':data_article})
 
-<<<<<<< HEAD
+
 def article_detail(request, slug):
     return render(request, "article_detail.html")
-=======
     if request.method == "POST":
         if form.is_valid():  # Kondisi data pada field valid
             feedback = Feedback(
@@ -53,7 +45,6 @@ def article_detail(request, slug):
             return HttpResponseRedirect(reverse("bin_bank:homepage"))
         else:
             form = FeedbackForm()
->>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e
 
 def feedback(request):     
     data_feedback = Feedback.objects.all() 
@@ -102,17 +93,10 @@ def show_history(request):
 
 # @login_required(login_url='/login/')
 def update_transaction(request, id):
-<<<<<<< HEAD
-    task_list = Transaction.objects.filter(id=id)
-    task = task_list[0]
-    task.isFinished = True
-    task.save()
-=======
     transaction_list = Transaction.objects.filter(id=id)
     transaction = transaction_list[0]
     transaction.isFinished = True
     transaction.save()
->>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e
     return redirect('bin_bank:show_history')
 
 
@@ -149,3 +133,11 @@ def show_transaction_user_range(request):
 
 def deposit_sampah(request):
     return render(request, "deposit_sampah.html")
+
+def show_leaderboard(request):
+    user_data = MyUser.objects.all().order_by('-points')
+    return HttpResponse(serializers.serialize("json", user_data), content_type="application/json")
+
+def leaderboard(request):
+    context = {}
+    return render(request, "leaderboard.html", context)
