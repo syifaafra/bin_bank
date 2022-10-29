@@ -15,37 +15,7 @@
 
 {% block content %}
 <body data-bs-spy="scroll" data-bs-target=".navbar">
-
-    <!--navbar-->
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white" data-aos="fade-down">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'bin_bank:homepage' %}">BIN BANK.</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bin_bank:homepage' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">Leaderboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bin_bank:deposit_sampah' %}">Donate</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bin_bank:show_history' %}">History</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bin_bank:login' %}">Login</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+    {% include 'navbar.html' %}
     <!-- Welcome Section -->
     <section id="home" class="bg-cover hero-section" style="background-image: url(img/cover_1.jpg);">
         <div class="overlay"></div>

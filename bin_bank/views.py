@@ -1,7 +1,5 @@
-import json
-from asyncio.windows_events import NULL
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse 
 from django.core import serializers
 
@@ -70,7 +68,7 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('bin_bank:home')
+            return redirect('bin_bank:homepaage')
         else:
             messages.info(request, 'Username atau Password salah!')
     context = {}
@@ -82,7 +80,7 @@ def logout_user(request):
     return redirect('bin_bank:login')
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_history(request):
     # context = {
     #     'username': request.user.username,
@@ -91,7 +89,7 @@ def show_history(request):
     return render(request, "history.html")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def update_transaction(request, id):
     transaction_list = Transaction.objects.filter(id=id)
     transaction = transaction_list[0]
@@ -100,25 +98,25 @@ def update_transaction(request, id):
     return redirect('bin_bank:show_history')
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user(request):
     transactions = Transaction.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_ongoing(request):
     transactions = Transaction.objects.filter(user=request.user, isFinished=False)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_success(request):
     transactions = Transaction.objects.filter(user=request.user, isFinished=True)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
         # transaction = Transaction(
