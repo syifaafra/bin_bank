@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+{% include 'navbar.html' %}
 <!-- Section: Design Block -->
 <section class=" text-center text-lg-start">
   <style>
@@ -27,27 +27,34 @@
 </style>
 
 <div class="container py-5 h-100">
-  <div class="card mb-3 py-0">
+  <h2>Filter</h2>
     <form method="POST" action="" id="filterTransaction">
       {% csrf_token %}
       <div class="form-outline mb-4">
-        <label class="form-label" for="id_batasbawah">Minimal (inklusif)</label>
-        <input type="number" id="id_batasbawah" name="Min" min="1"></input>
+        <h5>Berat</h5>
+        <label class="form-label" for="id_batasbawah"></label>
+        <input type="number" id="id_batasbawah" name="Min" min="0" placeholder="Minimal Kilogram"></input>
+        
         {% if form.title.errors %}
         <span class="text-danger">{{ form.title.errors }} </span>
         {% endif %}  
-      </div>
 
-      <div class="form-outline mb-4">
-        <label class="form-label" for="id_batasatas">Maksimal (inklusif)</label>
-        <input type="number" id="id_batasatas" name="Max" max="99999999999999"></input>
+        <label class="form-label" for="id_batasatas"></label>
+        <input type="number" id="id_batasatas" name="Max" max="99999999999999" placeholder="Maksimal Kilogram"></input>
         {% if form.desc.errors %}
         <span class="text-danger">{{ form.desc.errors }} </span>
         {% endif %} 
+        
       </div>
       <input type="submit" class="btn btn-primary btn-block mb-4" value="Cari" id="cariBtn">
+      <div>
+
+        <h5>Status</h5>
+        <input type="submit" class="btn btn-primary btn-block mb-4" value="Sedang Berlangsung" id="filterongoing">
+        <input type="submit" class="btn btn-primary btn-block mb-4" value="Berhasil" id="filtersucess">
+
+      </div>
     </form>
-  </div>
 </div>
 
 <div class="container py-5 h-100"></div>
@@ -61,6 +68,8 @@
 <script>
   $(document).ready(() => {
     $("#cariBtn").click(setrange)
+    $("#filterongoing").click(getDataOngoing)
+    $("#filtersucess").click(getDataSuccess)
     showDefault()
   })
 
@@ -69,6 +78,20 @@
       showDefault(data)
     })
     
+  }
+
+  function getDataOngoing(e){
+    e.preventDefault()
+    $.get("{% url 'bin_bank:show_transaction_user_ongoing' %}", function (data) {
+      showDefault(data)
+    })
+  }
+
+  function getDataSuccess(e){
+    e.preventDefault()
+    $.get("{% url 'bin_bank:show_transaction_user_success' %}", function (data) {
+      showDefault(data)
+    })
   }
 
   function showDefault(data){
@@ -90,7 +113,7 @@
       var date = fields.date 
       var amountKg = fields.amountKg 
       var branchName = fields.branchName 
-      var isFInished = fields.isFInished 
+      var isFinished = fields.isFinished 
 
       var cardHeader = document.createElement("h2")
       cardHeader.className = "card-title"
@@ -98,15 +121,13 @@
 
       var cardText = document.createElement("p")
       cardText.className = "card-text"
-      cardText.innerHTML = branchName
+      cardText.innerHTML = "Cabang: " + branchName
       
       var cardStatus = document.createElement("h5")
       cardStatus.className = "card-text"
-      cardStatus.innerHTML = (isFInished) ? 'Berhasil' : 'Sedang Berlangsung' 
-
-      if (!isFInished) {
-        console.log("ININI")
-        var buttonUpdate = document.createElement("a")
+      cardStatus.innerHTML = (isFinished) ? 'Berhasil' : 'Sedang Berlangsung' 
+      var buttonUpdate = document.createElement("a")
+      if (!isFinished) {
         buttonUpdate.href = "/update-transaction/" + element.pk
         buttonUpdate.className = "btn btn-primary"
         buttonUpdate.innerHTML = "Selesaikan Transaksi"

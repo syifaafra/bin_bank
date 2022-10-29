@@ -64,7 +64,7 @@ def logout_user(request):
     return redirect('bin_bank:login')
 
 
-@login_required(login_url='/bin_bank/login/')
+# @login_required(login_url='/login/')
 def show_history(request):
     # context = {
     #     'username': request.user.username,
@@ -73,7 +73,7 @@ def show_history(request):
     return render(request, "history.html")
 
 
-@login_required(login_url='/bin_bank/login/')
+# @login_required(login_url='/login/')
 def update_transaction(request, id):
     transaction_list = Transaction.objects.filter(id=id)
     transaction = transaction_list[0]
@@ -82,27 +82,32 @@ def update_transaction(request, id):
     return redirect('bin_bank:show_history')
 
 
-@login_required(login_url='/bin_bank/login/')
+# @login_required(login_url='/login/')
 def show_transaction_user(request):
     transactions = Transaction.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-@login_required(login_url='/bin_bank/login/')
+# @login_required(login_url='/login/')
 def show_transaction_user_ongoing(request):
-    transactions = Transaction.objects.filter(user=request.user, isFInished=False)
+    transactions = Transaction.objects.filter(user=request.user, isFinished=False)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-@login_required(login_url='/bin_bank/login/')
+# @login_required(login_url='/login/')
 def show_transaction_user_success(request):
-    transactions = Transaction.objects.filter(user=request.user, isFInished=True)
+    transactions = Transaction.objects.filter(user=request.user, isFinished=True)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-@login_required(login_url='/bin_bank/login/')
+# @login_required(login_url='/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
+        # transaction = Transaction(
+        #     amountKg = 4,
+        #     branchName = "New York"
+        # )
+        # transaction.save()
         transactions = Transaction.objects.filter(amountKg__range=(request.POST["Min"], request.POST["Max"]))
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method", status_code=405)
