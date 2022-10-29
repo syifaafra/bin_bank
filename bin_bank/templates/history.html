@@ -1,19 +1,61 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<nav class="navbar navbar-light bg-light">
-    <a class="navbar-brand" href="#">
-        <h1 class="p3">Tugas 4 Assignment PBP/PBD</h1>
-    </a>
-    <a>
-        <div>
-            <h4>Nama: </h4>
-            <h5>{{username}}</h5>
-        </div>
-        <a href="{% url 'bin_bank:logout_user' %}" class="btn btn-primary">Logout</a>
-    </a>
-</nav>
+{% include 'navbar.html' %}
+<!-- Section: Design Block -->
+<section class=" text-center text-lg-start">
+  <style>
+    .rounded-t-5 {
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+    }
 
+    @media (min-width: 992px) {
+      .rounded-tr-lg-0 {
+        border-top-right-radius: 0;
+      }
+
+      .rounded-bl-lg-5 {
+        border-bottom-left-radius: 0.5rem;
+      }
+    }
+    .card{
+      background-repeat: no-repeat;
+      background-position: right;
+      background-size: 80px;
+    }
+</style>
+
+<div class="container py-5 h-100">
+  <h2>Filter</h2>
+    <form method="POST" action="" id="filterTransaction">
+      {% csrf_token %}
+      <div class="form-outline mb-4">
+        <h5>Berat</h5>
+        <label class="form-label" for="id_batasbawah"></label>
+        <input type="number" id="id_batasbawah" name="Min" min="0" placeholder="Minimal Kilogram"></input>
+        
+        {% if form.title.errors %}
+        <span class="text-danger">{{ form.title.errors }} </span>
+        {% endif %}  
+
+        <label class="form-label" for="id_batasatas"></label>
+        <input type="number" id="id_batasatas" name="Max" max="99999999999999" placeholder="Maksimal Kilogram"></input>
+        {% if form.desc.errors %}
+        <span class="text-danger">{{ form.desc.errors }} </span>
+        {% endif %} 
+        
+      </div>
+      <input type="submit" class="btn btn-primary btn-block mb-4" value="Cari" id="cariBtn">
+      <div>
+
+        <h5>Status</h5>
+        <input type="submit" class="btn btn-primary btn-block mb-4" value="Sedang Berlangsung" id="filterongoing">
+        <input type="submit" class="btn btn-primary btn-block mb-4" value="Berhasil" id="filtersucess">
+
+      </div>
+    </form>
+</div>
 
 <div class="container py-5 h-100"></div>
 
@@ -25,15 +67,37 @@
 
 <script>
   $(document).ready(() => {
+    $("#cariBtn").click(setrange)
+    $("#filterongoing").click(getDataOngoing)
+    $("#filtersucess").click(getDataSuccess)
     showDefault()
   })
 
-  function showDefault(){
+  function getDataDefault(){
+    $.get("{% url 'bin_bank:show_transaction_user' %}", function (data) {
+      showDefault(data)
+    })
+    
+  }
+
+  function getDataOngoing(e){
+    e.preventDefault()
+    $.get("{% url 'bin_bank:show_transaction_user_ongoing' %}", function (data) {
+      showDefault(data)
+    })
+  }
+
+  function getDataSuccess(e){
+    e.preventDefault()
+    $.get("{% url 'bin_bank:show_transaction_user_success' %}", function (data) {
+      showDefault(data)
+    })
+  }
+
+  function showDefault(data){
     var container = document.getElementsByClassName("container py-5 h-100")[1]
     container.innerHTML = ""
-
-    $.get("{% url 'bin_bank:show_json' %}", function (data) {
-    
+    console.log(data)
     data.forEach(element => {
       var card = document.createElement("div")
       card.className = "card mb-3 py-0"
@@ -49,44 +113,55 @@
       var date = fields.date 
       var amountKg = fields.amountKg 
       var branchName = fields.branchName 
-      var points = fields.points 
-      var isFInished = fields.isFInished 
+      var isFinished = fields.isFinished 
 
       var cardHeader = document.createElement("h2")
       cardHeader.className = "card-title"
-      cardHeader.innerHTML = amountKg + " (" + date.substring(0,date.indexOf("T")) + ")" 
+      cardHeader.innerHTML = amountKg+ " Kg" + " (" + date.substring(0,date.indexOf("T")) + ")" 
 
       var cardText = document.createElement("p")
       cardText.className = "card-text"
-      cardText.innerHTML = branchName + points
+      cardText.innerHTML = "Cabang: " + branchName
       
       var cardStatus = document.createElement("h5")
       cardStatus.className = "card-text"
-      cardStatus.innerHTML = (is_finished) ? 'Berhasil' : 'Sedang Berlangsung' 
-
-      if (isFInished == false) {
-        var buttonUpdate = document.createElement("a")
-        buttonUpdate.href = "/bin_bank/update-task/" + element.pk
+      cardStatus.innerHTML = (isFinished) ? 'Berhasil' : 'Sedang Berlangsung' 
+      var buttonUpdate = document.createElement("a")
+      if (!isFinished) {
+        buttonUpdate.href = "/update-transaction/" + element.pk
         buttonUpdate.className = "btn btn-primary"
-        buttonUpdate.innerHTML = "Selesai"
+        buttonUpdate.innerHTML = "Selesaikan Transaksi"
       }
       
       cardBody.appendChild(cardHeader)
       cardBody.appendChild(cardText)
       cardBody.appendChild(cardStatus)
+      cardBody.appendChild(buttonUpdate)
 
       cardContent.appendChild(cardBody)
       card.appendChild(cardContent)
       container.appendChild(card)
 
       document.body.appendChild(container)
-      }); 
+      
     })
 
     
   }
+
   
-  
+  function setrange(e) {
+    e.preventDefault()
+     $.ajax({
+      type: 'POST',
+      url: '/json/range/',
+      data: $("#filterTransaction").serialize(), 
+      success: function(data) {
+          showDefault(data)
+        },
+        dataType: 'json'
+      });
+  }
   
     
 

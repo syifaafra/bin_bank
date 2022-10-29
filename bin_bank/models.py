@@ -1,10 +1,20 @@
-from datetime import timezone
+from django.contrib.auth.models import (
+    BaseUserManager, AbstractBaseUser
+)
+from django.db import models
 from django.utils import timezone
+<<<<<<< HEAD
 from xmlrpc.client import MAXINT, MININT
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 from django.db import models
+=======
+
+from project_django import settings
+
+User = settings.AUTH_USER_MODEL
+>>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e
 
 
 class Transaction(models.Model):
@@ -15,20 +25,79 @@ class Transaction(models.Model):
     isFinished = models.BooleanField(default=False)
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=500, blank=True)
-    points = models.IntegerField()
+class MyUserManager(BaseUserManager):
+    def create_user(self, username, password=None):
+        user = self.model(
+            username=username
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password=None):
+        """
+        Creates and saves a superuser with the given email, date of
+        birth and password.
+        """
+        user = self.create_user(
+            password=password,
+            username=username,
+        )
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
+
+class MyUser(AbstractBaseUser):
+    username = models.CharField(max_length=20, unique=True)
+    points = models.IntegerField(default=0)
+
+    is_admin = models.BooleanField(default=False)
+    objects = MyUserManager()
+
+    USERNAME_FIELD = 'username'
+
+    def __str__(self):
+        return self.username
+
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    @property
+    def is_staff(self):
+        "Is the user a member of staff?"
+        # Simplest possible answer: All admins are staff
+        return self.is_admin
+
 
 class Article(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField()
     intro = models.TextField()
+<<<<<<< HEAD
     publish_date = models.DateField()
     content = models.TextField()
+=======
+    image = models.CharField(max_length=500)
+    news = models.TextField()
+>>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e
     source = models.TextField()
 
+
 class Feedback(models.Model):
+<<<<<<< HEAD
     date = models.DateTimeField(auto_now_add=True)
     feedback = models.TextField()
 
+=======
+    date = models.DateTimeField(default=timezone.now())
+    feedback = models.TextField()
+>>>>>>> b36f0cf950a57741e65863a87ed1c189a60fb31e

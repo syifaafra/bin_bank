@@ -6,21 +6,14 @@
 
 {% block content %}
 {% load static %}
-<!-- Navbar -->
-<nav class="navbar bg-custom-navbar">
-    <div class="container">
-      <a class="navbar-brand mb-0 h1" href="#" style="color:white"> 
-        To Do List Page 
-    </a>
-      </div>
-</nav>
+{% include 'navbar.html' %}
 <section class="main">
 	<div class="layer">
 
         <h1>Login</h1>
         <form method="POST" action="">
             {% csrf_token %}
-            <div class="mx-auto card align-items-center  text-white bg-custom-navbar mb-3 w-50 " >
+            <div class="mx-auto card align-items-center mb-3 w-50 " >
                 <div class="card-body">
                         <table>
                             <tr>
@@ -38,7 +31,7 @@
                                 <td><input class="btn login_btn" type="submit" value="Login"></td>
                             </tr>
                         </table>
-                        Belum mempunyai akun? <a href="{% url 'todolist:register' %}">Buat Akun</a>
+                        Belum mempunyai akun? <a href="{% url 'bin_bank:register' %}">Buat Akun</a>
                 </div>
             </div>
         </form>
