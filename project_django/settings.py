@@ -85,7 +85,7 @@ DATABASES = {
 }
 
 if PRODUCTION:
-    DATABASES['default'] = dj_database_url.config(
+    DATABASES['default'] = dj_database_url.config(  # type: ignore
         conn_max_age=600, ssl_require=True
     )
 
