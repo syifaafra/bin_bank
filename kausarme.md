@@ -1,38 +1,72 @@
 Nama: Kausar Meutuwah NPM: 2106630100
 
-File Markdown ini mediskripsikan bagaimana saya mengimplementasikan modul Deposit Sampah
+# Impelementasi
 
-# Impelementasi Kausar Meutuwah
+## Persiapan Awal(Dikerjakan bersama)
 
-## Persiapan Awal
-Untuk awal 
+1. Pertama untuk mengawali kita akan membuat project django dengan menclone template
+   dari https://github.com/pbp-fasilkom-ui/django-pbp-template.
 
-## Menerapkan Model Orderan
+2. Selajutnya, kita membuat sebuah aplikasi bernama `bin_bank` serta menghapus project `example_app`
 
-Menerapkan models Orderan sendiri
+```
+python manage.py startapp bin_bank
+```
 
-Membuat Models Orderan
-Menerapkan Foreign Key
+3. Daftarkan aplikasi bin_bank ke settings.py
 
-menerapkan foreign key atau inheritance pada model, dan sudah mengonfigurasi Django Admin
-sebagai tempat pengelolaan data.
+```
+INSTALLED_APPS = [ ..., "bin_bank", ... ]
+```
+
+4. Buat views dasar untuk ngetes aplikasi
+
+## Menerapkan Models(Dikerjakan bersama)
+
+### 1. Buat Models Transaction untuk menyimpan pesanan dari semua orang
+
+```
+class Transaction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    date = models.DateTimeField(default=timezone.now())
+    amountKg = models.IntegerField()
+    branchName = models.CharField(max_length=255)
+    isFinished = models.BooleanField(default=False)
+```
+
+Transaction menggunakan Foreign Key yaitu user. Karena setiap Transaksi pasti dimiliki oleh tepat satu user.
+on_delete = models.CASCADE memastikan saat ForeignKey yaitu user di delete transaksi terkait juga akan terdele.
+
+date menyatakan waktu dan tanggal transaksi yang secara default akan di set menjadi waktu sekarang.
+amountKg menyatakan berat sampah.
+
+branchName menyatakan nama CABANg di mana sampah di donasikan 
+lalu isFinished menyatakan donasi sudah selesai.
+
+
+### 2. Membuat models MyUser sebagai custom user 
+
 
 ## Menerapkan views Deposit Sampah
+
 Membuat halaman dasar dengan mengextend dari base.html
+
 ```html
 {% extend base.html %} 
 ```
-Membuat Form yang diperlukan 
+
+Membuat Form yang diperlukan
 
 Menampilkan data yang diperlukan
 
 Ubah Form sehingga menampilkan dengan modals
 
 ## Menerapkan responsive web
-Tambahkan bootsrap class pada bagian yang perlu ditambahkan 
 
+Tambahkan bootsrap class pada bagian yang perlu ditambahkan
 
-## Memiliki halaman form yang dapat menerima masukan dari pengguna kemudian diproses oleh views 
+## Memiliki halaman form yang dapat menerima masukan dari pengguna kemudian diproses oleh views
+
 (contoh: insert ke dalam model, query dari model, update data di dalam model).
 
 ## Menerapkan JavaScript dengan pemanggilan AJAX.

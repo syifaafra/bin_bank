@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse 
+from django.urls import reverse
 from django.core import serializers
 
 from django.contrib import messages
@@ -29,7 +29,7 @@ def register(request):
 
 def homepage(request):
     data_article = Article.objects.all()
-    return render(request, 'homepage.html', {'articles':data_article})
+    return render(request, 'homepage.html', {'articles': data_article})
 
 
 def article_detail(request, slug):
@@ -44,16 +44,19 @@ def article_detail(request, slug):
         else:
             form = FeedbackForm()
 
-def feedback(request):     
-    data_feedback = Feedback.objects.all() 
+
+def feedback(request):
+    data_feedback = Feedback.objects.all()
     data_article = Article.objects.all()
     response = {'articles': data_article, 'data_feedback': data_feedback}
-    return render(request, 'feedback.html', response )
+    return render(request, 'feedback.html', response)
+
 
 @csrf_exempt
 def get_articles_json(request):
     data_article = Feedback.objects.all()
     return HttpResponse(serializers.serialize('json', data_article), content_type="application/json")
+
 
 @csrf_exempt
 def get_feedback_json(request):
@@ -132,9 +135,11 @@ def show_transaction_user_range(request):
 def deposit_sampah(request):
     return render(request, "deposit_sampah.html")
 
+
 def show_leaderboard(request):
     user_data = MyUser.objects.all().order_by('-points')
     return HttpResponse(serializers.serialize("json", user_data), content_type="application/json")
+
 
 def leaderboard(request):
     context = {}
