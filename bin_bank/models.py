@@ -1,24 +1,24 @@
-from datetime import datetime, timezone
-from django.utils import timezone
-from xmlrpc.client import MAXINT, MININT
-from django.db import models
-from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+from django.db import models
+from django.utils import timezone
+
 from project_django import settings
+
 User = settings.AUTH_USER_MODEL
+
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    date = models.DateTimeField(default=datetime.now())
+    date = models.DateTimeField(default=timezone.now())
     amountKg = models.IntegerField()
     branchName = models.CharField(max_length=255)
     isFinished = models.BooleanField(default=False)
 
+
 class MyUserManager(BaseUserManager):
-    def create_user(self, username,password=None):
-        
+    def create_user(self, username, password=None):
         user = self.model(
             username=username
         )
@@ -39,8 +39,10 @@ class MyUserManager(BaseUserManager):
         user.is_admin = True
         user.save(using=self._db)
         return user
+
+
 class MyUser(AbstractBaseUser):
-    username = models.CharField(max_length=20,unique=True)
+    username = models.CharField(max_length=20, unique=True)
     points = models.IntegerField(default=0)
 
     is_admin = models.BooleanField(default=False)
@@ -66,18 +68,18 @@ class MyUser(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-    
+
 
 class Article(models.Model):
     title = models.CharField(max_length=30)
     thumbnail = models.CharField(max_length=50)
     slug = models.SlugField()
     intro = models.TextField()
-    image= models.CharField(max_length=500)
+    image = models.CharField(max_length=500)
     news = models.TextField()
     source = models.TextField()
+
 
 class Feedback(models.Model):
     date = models.DateTimeField(default=timezone.now())
     feedback = models.TextField()
-    

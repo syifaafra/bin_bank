@@ -2,8 +2,11 @@ from xml.dom import ValidationErr
 from django import forms
 from bin_bank.models import MyUser
 
+
 class FeedbackForm(forms.Form):
-    feedback = forms.CharField(label="Comment", required=True, max_length = 100, widget=forms.Textarea(attrs = {'type' : 'text', 'placeholder': 'Write your feedback'}))
+    feedback = forms.CharField(label="Comment", required=True, max_length=100,
+                               widget=forms.Textarea(attrs={'type': 'text', 'placeholder': 'Write your feedback'}))
+
 
 class RegisterForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
@@ -30,5 +33,3 @@ class RegisterForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-
-

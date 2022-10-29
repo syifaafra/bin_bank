@@ -13,6 +13,7 @@ from bin_bank.forms import FeedbackForm, RegisterForm
 
 from django.views.decorators.csrf import csrf_exempt
 
+
 @csrf_exempt
 def register(request):
     form = RegisterForm()
@@ -32,16 +33,17 @@ def homepage(request):
     form = FeedbackForm(request.POST)
 
     if request.method == "POST":
-        if form.is_valid(): # Kondisi data pada field valid
+        if form.is_valid():  # Kondisi data pada field valid
             feedback = Feedback(
-                feedback = form.cleaned_data['feedback'],
+                feedback=form.cleaned_data['feedback'],
             )
-            feedback.save() # Menyimpan feedback ke database
+            feedback.save()  # Menyimpan feedback ke database
             return HttpResponseRedirect(reverse("bin_bank:homepage"))
         else:
             form = FeedbackForm()
 
     return render(request, 'home.html', {'articles': data_article, 'form': form})
+
 
 def login_user(request):
     if request.method == 'POST':
@@ -61,6 +63,7 @@ def logout_user(request):
     logout(request)
     return redirect('bin_bank:login')
 
+
 @login_required(login_url='/bin_bank/login/')
 def show_history(request):
     # context = {
@@ -68,7 +71,6 @@ def show_history(request):
     #     'last_login': request.COOKIES['last_login'],
     # }
     return render(request, "history.html")
-
 
 
 @login_required(login_url='/bin_bank/login/')
