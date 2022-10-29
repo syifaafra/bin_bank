@@ -95,18 +95,21 @@
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
+
+
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Task</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
+
                 <div class="modal-body">
                     <form method="POST" action="./add/" class="form-create-task" id="modal-form">
                         {% csrf_token %}
-                        <!-- <label for="id_title">Title:</label> -->
+
                         <input type="text" name="title" placeholder="Title" maxlength="128" required="" id="id_title"
                                class="form-control">
 
-                        <!-- <label for="id_description">Description:</label> -->
                         <textarea name="description" placeholder="Description" cols="40" rows="10" required=""
                                   id="id_description" class="form-control"></textarea>
 
@@ -114,6 +117,7 @@
                                data-bs-dismiss="modal"/>
                     </form>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                 </div>
