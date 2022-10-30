@@ -16,7 +16,7 @@ User = settings.AUTH_USER_MODEL
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    date = models.DateTimeField(default=timezone.now())
+    date = models.DateTimeField(default=timezone.now)
     amountKg = models.IntegerField()
     branchName = models.CharField(max_length=255)
     isFinished = models.BooleanField(default=False)
@@ -85,5 +85,5 @@ class Article(models.Model):
 
 
 class Feedback(models.Model):
-    date = models.DateTimeField(default=timezone.now())
+    date = models.DateTimeField(default=timezone.now)
     feedback = models.TextField()
