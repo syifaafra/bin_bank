@@ -33,6 +33,18 @@
 </style>
 
 <div class="container py-5 h-100">
+  <div>
+    <h5>Cari Transaksi</h5>
+    
+    <form method="POST" action="" id="searchtransaction">
+      {% csrf_token %}
+      {{form.as_p}}
+    <input type="submit" class="btn btn-primary btn-block mb-4" value="Cari" id="carispesifikBtn">
+    </form>
+  </div>
+  <div>
+
+
   <h2>Filter</h2>
     <form method="POST" action="" id="filterTransaction">
       {% csrf_token %}
@@ -60,22 +72,12 @@
         <input type="submit" class="btn btn-primary btn-block mb-4" value="Berhasil" id="filtersucess">
 
       </div>
-
+    </div>
       
       
       
     </form>
-    <div>
-      <h5>Cari Transaksi</h5>
-      
-      <form method="POST" action="" id="searchtransaction">
-        
-        {% csrf_token %}
-        {{form.as_p}}
-        
-      <input type="submit" class="btn btn-primary btn-block mb-4" value="Cari" id="carispesifikBtn">
-      </form>
-    </div>
+    
 </div>
 
 <div class="container py-5 h-100"></div>
@@ -92,9 +94,9 @@
     $("#carispesifikBtn").click(getDataSpecific)
     $("#filterongoing").click(getDataOngoing)
     $("#filtersucess").click(getDataSuccess)
-    showDefault()
+    getDataDefault()
   })
-
+//TODO: handle jika tidak ada data
   function getDataSpecific(e) {
     e.preventDefault()
      $.ajax({
