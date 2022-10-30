@@ -1,7 +1,17 @@
 from xml.dom import ValidationErr
 from django import forms
-from bin_bank.models import MyUser
+from django.forms import ModelForm
+from bin_bank.models import MyUser, Transaction
 
+
+
+class FindTransactionForm(ModelForm):
+    class Meta:
+        model = Transaction
+        fields = [
+            'amountKg',
+            'branchName'
+        ]
 
 class FeedbackForm(forms.Form):
     feedback = forms.CharField(label="Comment", required=True, max_length=100,

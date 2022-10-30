@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% load static %}
+{% block meta %}
+<title>History</title>
+{% endblock meta %}
+
+
 {% block content %}
 {% include 'navbar.html' %}
 <!-- Section: Design Block -->
@@ -54,7 +60,22 @@
         <input type="submit" class="btn btn-primary btn-block mb-4" value="Berhasil" id="filtersucess">
 
       </div>
+
+      
+      
+      
     </form>
+    <div>
+      <h5>Cari Transaksi</h5>
+      
+      <form method="POST" action="" id="searchtransaction">
+        
+        {% csrf_token %}
+        {{form.as_p}}
+        
+      <input type="submit" class="btn btn-primary btn-block mb-4" value="Cari" id="carispesifikBtn">
+      </form>
+    </div>
 </div>
 
 <div class="container py-5 h-100"></div>
@@ -68,10 +89,25 @@
 <script>
   $(document).ready(() => {
     $("#cariBtn").click(setrange)
+    $("#carispesifikBtn").click(getDataSpecific)
     $("#filterongoing").click(getDataOngoing)
     $("#filtersucess").click(getDataSuccess)
     showDefault()
   })
+
+  function getDataSpecific(e) {
+    e.preventDefault()
+     $.ajax({
+      type: 'POST',
+      url: '/json/search/',
+      data: $("#searchtransaction").serialize(), 
+      success: function(data) {
+          showDefault(data)
+        },
+        dataType: 'json'
+      });
+  }
+
 
   function getDataDefault(){
     $.get("{% url 'bin_bank:show_transaction_user' %}", function (data) {
@@ -92,6 +128,20 @@
     $.get("{% url 'bin_bank:show_transaction_user_success' %}", function (data) {
       showDefault(data)
     })
+  }
+
+
+  function setrange(e) {
+    e.preventDefault()
+     $.ajax({
+      type: 'POST',
+      url: '/json/range/',
+      data: $("#filterTransaction").serialize(), 
+      success: function(data) {
+          showDefault(data)
+        },
+        dataType: 'json'
+      });
   }
 
   function showDefault(data){
@@ -150,18 +200,7 @@
   }
 
   
-  function setrange(e) {
-    e.preventDefault()
-     $.ajax({
-      type: 'POST',
-      url: '/json/range/',
-      data: $("#filterTransaction").serialize(), 
-      success: function(data) {
-          showDefault(data)
-        },
-        dataType: 'json'
-      });
-  }
+  
   
     
 

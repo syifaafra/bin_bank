@@ -7,7 +7,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from bin_bank.models import Article, Feedback, MyUser, Transaction
 from django.views.decorators.csrf import csrf_exempt
+<<<<<<< HEAD
 from bin_bank.forms import RegisterForm
+=======
+from bin_bank.forms import FeedbackForm, RegisterForm, FindTransactionForm
+>>>>>>> 8c6dbe8d7ffd9ee6ecc8a0a1dc9ca33ec0074aef
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -72,16 +76,18 @@ def logout_user(request):
     return redirect('bin_bank:login')
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def show_history(request):
     # context = {
     #     'username': request.user.username,
     #     'last_login': request.COOKIES['last_login'],
     # }
-    return render(request, "history.html")
+    form = FindTransactionForm()
+    context = {'form':form}
+    return render(request, "history.html", context)
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def update_transaction(request, id):
     transaction_list = Transaction.objects.filter(id=id)
     transaction = transaction_list[0]
@@ -90,25 +96,25 @@ def update_transaction(request, id):
     return redirect('bin_bank:show_history')
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def show_transaction_user(request):
     transactions = Transaction.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def show_transaction_user_ongoing(request):
-    transactions = Transaction.objects.filter(user=request.user, isFinished=False)
+    transactions = Transaction.objects.filter(isFinished=False) # TODO: Add filter user
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def show_transaction_user_success(request):
-    transactions = Transaction.objects.filter(user=request.user, isFinished=True)
+    transactions = Transaction.objects.filter(isFinished=True) # TODO: Add filter user
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
         # transaction = Transaction(
@@ -116,10 +122,19 @@ def show_transaction_user_range(request):
         #     branchName = "New York"
         # )
         # transaction.save()
-        transactions = Transaction.objects.filter(amountKg__range=(request.POST["Min"], request.POST["Max"]))
+        transactions = Transaction.objects.filter(amountKg__range=(request.POST["Min"], request.POST["Max"])) # TODO: Add filter user
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method", status_code=405)
 
+# @login_required(login_url='/login/')
+def show_transaction_user_specific(request):
+    print(request)
+    form = FindTransactionForm(request.POST)
+    if form.is_valid():
+        form = form.save(commit=False)
+        transactions = Transaction.objects.filter(amountKg = form.amountKg, branchName = form.branchName) # TODO: Add filter user
+        return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")    
+    return HttpResponse("Invalid method")
 
 def deposit_sampah(request):
     return render(request, "deposit_sampah.html")

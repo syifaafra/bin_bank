@@ -1,7 +1,12 @@
 from django.urls import path
 from bin_bank.views import login_user, register, logout_user, show_transaction_user, show_transaction_user_ongoing, \
+<<<<<<< HEAD
     show_transaction_user_success, update_transaction, show_history, show_transaction_user_range, leaderboard
 from bin_bank.views import homepage, deposit_sampah, show_feedback_json, add_feedback
+=======
+    show_transaction_user_success, update_transaction, show_history, show_transaction_user_range, leaderboard, show_transaction_user_specific
+from bin_bank.views import homepage, deposit_sampah
+>>>>>>> 8c6dbe8d7ffd9ee6ecc8a0a1dc9ca33ec0074aef
 
 app_name = 'bin_bank'
 
@@ -18,6 +23,7 @@ urlpatterns = [
     path('json/ongoing', show_transaction_user_ongoing, name='show_transaction_user_ongoing'),
     path('json/success', show_transaction_user_success, name='show_transaction_user_success'),
     path('json/range/', show_transaction_user_range, name='show_transaction_user_range'),
+    path('json/search/', show_transaction_user_specific, name='show_transaction_user_specific'),
     path('update-transaction/<int:id>', update_transaction, name='update_transaction'),
     path('deposit_sampah/', deposit_sampah, name='deposit_sampah'),
 ]
