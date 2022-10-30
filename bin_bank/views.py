@@ -7,14 +7,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from bin_bank.models import Article, Feedback, MyUser, Transaction
 from django.views.decorators.csrf import csrf_exempt
-<<<<<<< HEAD
 from bin_bank.forms import RegisterForm
-=======
 from bin_bank.forms import FeedbackForm, RegisterForm, FindTransactionForm
->>>>>>> 8c6dbe8d7ffd9ee6ecc8a0a1dc9ca33ec0074aef
-
 from django.views.decorators.csrf import csrf_exempt
-
 
 @csrf_exempt
 def register(request):
