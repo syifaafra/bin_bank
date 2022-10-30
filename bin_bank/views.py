@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.core import serializers
 
 from django.contrib import messages
@@ -8,7 +7,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from bin_bank.models import Article, Feedback, MyUser, Transaction
 from django.views.decorators.csrf import csrf_exempt
+<<<<<<< HEAD
+from bin_bank.forms import RegisterForm
+=======
 from bin_bank.forms import FeedbackForm, RegisterForm, FindTransactionForm
+>>>>>>> 8c6dbe8d7ffd9ee6ecc8a0a1dc9ca33ec0074aef
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -28,41 +31,31 @@ def register(request):
 
 
 def homepage(request):
+    total_feedback = Feedback.objects.count()
     data_article = Article.objects.all()
-    return render(request, 'homepage.html', {'articles': data_article})
+    context = {
+        'shared_story':total_feedback,
+        'articles': data_article
+    }
+    return render(request, 'homepage.html', context)
 
+def add_feedback(request):
+    if request.method == 'POST':
+        feedback = request.POST.get("feedback")
+        new_feedback = Feedback(feedback=feedback)
+        new_feedback.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
 
 def article_detail(request, slug):
     return render(request, "article_detail.html")
-    if request.method == "POST":
-        if form.is_valid():  # Kondisi data pada field valid
-            feedback = Feedback(
-                feedback=form.cleaned_data['feedback'],
-            )
-            feedback.save()  # Menyimpan feedback ke database
-            return HttpResponseRedirect(reverse("bin_bank:homepage"))
-        else:
-            form = FeedbackForm()
 
-
-def feedback(request):
+# Fungsi untuk mengembalikan seluruh data task dalam bentuk JSON
+def show_feedback_json(request):
     data_feedback = Feedback.objects.all()
-    data_article = Article.objects.all()
-    response = {'articles': data_article, 'data_feedback': data_feedback}
-    return render(request, 'feedback.html', response)
-
-
-@csrf_exempt
-def get_articles_json(request):
-    data_article = Feedback.objects.all()
-    return HttpResponse(serializers.serialize('json', data_article), content_type="application/json")
-
-
-@csrf_exempt
-def get_feedback_json(request):
-    data_feedback = Article.objects.all()
-    return HttpResponse(serializers.serialize('json', data_feedback), content_type="application/json")
-
+    return HttpResponse(serializers.serialize('json', data_feedback), content_type='application/json')
 
 def login_user(request):
     if request.method == 'POST':
@@ -71,7 +64,7 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('bin_bank:homepaage')
+            return redirect('bin_bank:homepage')
         else:
             messages.info(request, 'Username atau Password salah!')
     context = {}
