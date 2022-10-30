@@ -4,7 +4,6 @@ from django.forms import ModelForm
 from bin_bank.models import MyUser, Transaction
 
 
-
 class FindTransactionForm(ModelForm):
     class Meta:
         model = Transaction
@@ -12,6 +11,7 @@ class FindTransactionForm(ModelForm):
             'amountKg',
             'branchName'
         ]
+
 
 class FeedbackForm(forms.Form):
     feedback = forms.CharField(label="Comment", required=True, max_length=100,
@@ -43,3 +43,12 @@ class RegisterForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class AddTransactionForm(ModelForm):
+    class Meta:
+        model = Transaction
+        fields = [
+            'amountKg',
+            'branchName'
+        ]
