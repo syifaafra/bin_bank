@@ -9,7 +9,7 @@
 {% block content %}
 {% include 'navbar.html' %}
 <!-- Section: Design Block -->
-<section class=" text-center text-lg-start">
+<section class="text-center text-lg-start">
   <style>
     .rounded-t-5 {
       border-top-left-radius: 0.5rem;
@@ -30,26 +30,18 @@
       background-position: right;
       background-size: 80px;
     }
-</style>
-
-<div class="container py-5 h-100">
-  <div>
-    <h5>Cari Transaksi</h5>
-    
+  </style> 
     <form method="POST" action="" id="searchtransaction">
+      <h2>Cari Transaksi</h2>
       {% csrf_token %}
       {{form.as_p}}
-    <input type="submit" class="btn btn-primary btn-block mb-4" value="Cari" id="carispesifikBtn">
+      <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Cari" id="carispesifikBtn">
     </form>
-  </div>
-  <div>
 
-
-  <h2>Filter</h2>
     <form method="POST" action="" id="filterTransaction">
       {% csrf_token %}
       <div class="form-outline mb-4">
-        <h5>Berat</h5>
+        <h5>Berdasarkan Berat</h5>
         <label class="form-label" for="id_batasbawah"></label>
         <input type="number" id="id_batasbawah" name="Min" min="0" placeholder="Minimal Kilogram"></input>
         
@@ -59,154 +51,193 @@
 
         <label class="form-label" for="id_batasatas"></label>
         <input type="number" id="id_batasatas" name="Max" max="99999999999999" placeholder="Maksimal Kilogram"></input>
+        
         {% if form.desc.errors %}
         <span class="text-danger">{{ form.desc.errors }} </span>
         {% endif %} 
         
       </div>
-      <input type="submit" class="btn btn-primary btn-block mb-4" value="Cari" id="cariBtn">
-      <div>
+    </form>
 
-        <h5>Status</h5>
-        <input type="submit" class="btn btn-primary btn-block mb-4" value="Sedang Berlangsung" id="filterongoing">
-        <input type="submit" class="btn btn-primary btn-block mb-4" value="Berhasil" id="filtersucess">
+    <div>
+      <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Cari" id="cariBtn">
+      <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Reset" id="resetBtn">
+    </div>
 
+    <div>
+      <div class="form-outline mb-4">
+        <h5>Berdasarkan Status</h5>
+        <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Semua" id="filterall">
+        <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Sedang Berlangsung" id="filterongoing">
+        <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Berhasil" id="filtersucess">
+        
       </div>
     </div>
-      
-      
-      
-    </form>
     
-</div>
+    <div class="container py-5 h-100"></div> 
+  
 
-<div class="container py-5 h-100"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+    crossorigin="anonymous">
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" 
-  integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
-  crossorigin="anonymous">
-</script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-<script>
-  $(document).ready(() => {
-    $("#cariBtn").click(setrange)
-    $("#carispesifikBtn").click(getDataSpecific)
-    $("#filterongoing").click(getDataOngoing)
-    $("#filtersucess").click(getDataSuccess)
-    getDataDefault()
-  })
-//TODO: handle jika tidak ada data
-  function getDataSpecific(e) {
-    e.preventDefault()
-     $.ajax({
-      type: 'POST',
-      url: '/json/search/',
-      data: $("#searchtransaction").serialize(), 
-      success: function(data) {
-          showDefault(data)
-        },
-        dataType: 'json'
-      });
-  }
-
-
-  function getDataDefault(){
-    $.get("{% url 'bin_bank:show_transaction_user' %}", function (data) {
-      showDefault(data)
+  <script>
+    var maxKg = 0
+    $(document).ready(() => {
+      $("#cariBtn").click(setrange)
+      $("#carispesifikBtn").click(getDataSpecific)
+      $("#filterongoing").click(getDataOngoing)
+      $("#filtersucess").click(getDataSuccess)
+      $("#filterall").click(getDataDefaultButton)
+      $("#resetBtn").click(resetRangeFilter)
+      getDataDefault()
     })
-    
-  }
 
-  function getDataOngoing(e){
-    e.preventDefault()
-    $.get("{% url 'bin_bank:show_transaction_user_ongoing' %}", function (data) {
-      showDefault(data)
-    })
-  }
+    function getDataSpecific(e) {
+      e.preventDefault()
+      $.ajax({
+        type: 'POST',
+        url: '/json/search/',
+        data: $("#searchtransaction").serialize(), 
+        success: function(data) {
+            showDefault(data)
+          },
+          dataType: 'json'
+        });
+    }
 
-  function getDataSuccess(e){
-    e.preventDefault()
-    $.get("{% url 'bin_bank:show_transaction_user_success' %}", function (data) {
-      showDefault(data)
-    })
-  }
+    function resetRangeFilter(e){
+      e.preventDefault()
+      $("#filterTransaction")[0].reset();
+      $.get("{% url 'bin_bank:show_transaction_user' %}", function (data) {
+        showDefault(data)
+      })
+    }
+    function getDataDefaultButton(e){
+      e.preventDefault()
+      $.get("{% url 'bin_bank:show_transaction_user' %}", function (data) {
+        showDefault(data)
+      })
+    }
 
-
-  function setrange(e) {
-    e.preventDefault()
-     $.ajax({
-      type: 'POST',
-      url: '/json/range/',
-      data: $("#filterTransaction").serialize(), 
-      success: function(data) {
-          showDefault(data)
-        },
-        dataType: 'json'
-      });
-  }
-
-  function showDefault(data){
-    var container = document.getElementsByClassName("container py-5 h-100")[1]
-    container.innerHTML = ""
-    console.log(data)
-    data.forEach(element => {
-      var card = document.createElement("div")
-      card.className = "card mb-3 py-0"
+    function getDataDefault(){
+      $.get("{% url 'bin_bank:show_transaction_user' %}", function (data) {
+        showDefault(data)
+      })
       
-      var cardContent = document.createElement("div")
-      cardContent.className = "row g-0 d-flex align-items-center justify-content-center"
-      
-      var cardBody = document.createElement("div")
-      cardBody.className = "card-body py-5 px-md-5"
-    
-      var fields = element.fields
-      var user = fields.user 
-      var date = fields.date 
-      var amountKg = fields.amountKg 
-      var branchName = fields.branchName 
-      var isFinished = fields.isFinished 
+    }
 
-      var cardHeader = document.createElement("h2")
-      cardHeader.className = "card-title"
-      cardHeader.innerHTML = amountKg+ " Kg" + " (" + date.substring(0,date.indexOf("T")) + ")" 
+    function getDataOngoing(e){
+      e.preventDefault()
+      $.get("{% url 'bin_bank:show_transaction_user_ongoing' %}", function (data) {
+        showDefault(data)
+      })
+    }
 
-      var cardText = document.createElement("p")
-      cardText.className = "card-text"
-      cardText.innerHTML = "Cabang: " + branchName
-      
-      var cardStatus = document.createElement("h5")
-      cardStatus.className = "card-text"
-      cardStatus.innerHTML = (isFinished) ? 'Berhasil' : 'Sedang Berlangsung' 
-      var buttonUpdate = document.createElement("a")
-      if (!isFinished) {
-        buttonUpdate.href = "/update-transaction/" + element.pk
-        buttonUpdate.className = "btn btn-primary"
-        buttonUpdate.innerHTML = "Selesaikan Transaksi"
+    function getDataSuccess(e){
+      e.preventDefault()
+      $.get("{% url 'bin_bank:show_transaction_user_success' %}", function (data) {
+        showDefault(data)
+      })
+    }
+
+
+    function setrange(e) {
+      e.preventDefault()
+      var batasBawah = $("#id_batasbawah")[0]
+      var batasAtas = $("#id_batasatas")[0]
+
+      //Handle jika input kosong, set max dan min
+      if (batasBawah.value==""){
+        batasBawah.value=0
       }
+      if (batasAtas.value==""){
+        batasAtas.value = maxKg
+      }
+      $.ajax({
+        type: 'POST',
+        url: '/json/range/',
+        data: $("#filterTransaction").serialize(), 
+        success: function(data) {
+            showDefault(data)
+          },
+          dataType: 'json'
+        });
       
-      cardBody.appendChild(cardHeader)
-      cardBody.appendChild(cardText)
-      cardBody.appendChild(cardStatus)
-      cardBody.appendChild(buttonUpdate)
+    }
 
-      cardContent.appendChild(cardBody)
-      card.appendChild(cardContent)
-      container.appendChild(card)
-
-      document.body.appendChild(container)
+    function showDefault(data){
+      var container = document.getElementsByClassName("container py-5 h-100")[0]
+      container.innerHTML = ""
       
-    })
+      if (data.length == 0) {
+        var cardHeader = document.createElement("h2")
+        cardHeader.innerHTML = "Tidak transaksi yang sesuai"
+        container.appendChild(cardHeader)
+        return
+      }
+      data.forEach(element => {
+        var card = document.createElement("div")
+        card.className = "card mb-3 py-0"
+        
+        var cardContent = document.createElement("div")
+        cardContent.className = "row g-0 d-flex align-items-center justify-content-center"
+        
+        var cardBody = document.createElement("div")
+        cardBody.className = "card-body py-5 px-md-5"
+      
+        var fields = element.fields
+        var user = fields.user 
+        var date = fields.date 
+        var amountKg = fields.amountKg 
+        var branchName = fields.branchName 
+        var isFinished = fields.isFinished 
+
+        if (amountKg>maxKg) {
+          maxKg = amountKg
+        }
+        var cardHeader = document.createElement("h2")
+        cardHeader.className = "card-title"
+        cardHeader.innerHTML = amountKg+ " Kg" + " (" + date.substring(0,date.indexOf("T")) + ")" 
+
+        var cardText = document.createElement("p")
+        cardText.className = "card-text"
+        cardText.innerHTML = "Cabang: " + branchName
+        
+        var cardStatus = document.createElement("h5")
+        cardStatus.className = "card-text"
+        cardStatus.innerHTML = (isFinished) ? 'Berhasil' : 'Sedang Berlangsung' 
+        var buttonUpdate = document.createElement("a")
+        if (!isFinished) {
+          buttonUpdate.href = "/update-transaction/" + element.pk
+          buttonUpdate.className = "btn btn-primary"
+          buttonUpdate.innerHTML = "Selesaikan Transaksi"
+        }
+        
+        cardBody.appendChild(cardHeader)
+        cardBody.appendChild(cardText)
+        cardBody.appendChild(cardStatus)
+        cardBody.appendChild(buttonUpdate)
+
+        cardContent.appendChild(cardBody)
+        card.appendChild(cardContent)
+        container.appendChild(card)
+
+        //document.body.appendChild(container)
+        
+      })
+
+      
+    }
 
     
-  }
-
-  
-  
-  
     
+    
+      
 
-</script>
+  </script>
 
 </section>
 {% endblock content %}
