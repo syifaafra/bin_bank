@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.core import serializers
@@ -100,7 +101,7 @@ def update_transaction(request, id):
 
 # @login_required(login_url='/login/')
 def show_transaction_user(request):
-    transactions = Transaction.objects.filter(user=request.user)
+    transactions = Transaction.objects.all() # TODO: Add filter user
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
@@ -115,15 +116,16 @@ def show_transaction_user_success(request):
     transactions = Transaction.objects.filter(isFinished=True)  # TODO: Add filter user
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
-
 # @login_required(login_url='/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
-        # transaction = Transaction(
-        #     amountKg = 4,
-        #     branchName = "New York"
-        # )
-        # transaction.save()
+        # cities =("New","Los","Chicago","Houston","Phoenix","Philadelphia","San","San","Dallas","San","Austin","Jacksonville","Fort","Columbus","Charlotte","Indianapolis","San","Seattle","Denver","Washington","Nashville","Oklahoma","Boston","El","Portland","Las","Memphis","Detroit","Baltimore","Milwaukee","Albuquerque","Fresno","Tucson","Sacramento","Kansas","Mesa","Atlanta","Omaha","Colorado","Raleigh","Long","Virginia","Miami","Oakland","Minneapolis","Tulsa","Bakersfield","Wichita","Arlington","Aurora","Tampa","New","Cleveland","Honolulu","Anaheim","Louisville","Henderson","Lexington","Irvine","Stockton","Orlando","Corpus","Newark","Riverside","St","Cincinnati","San","Santa","Greensboro","Pittsburgh","Jersey","St","Lincoln","Durham","Anchorage","Plano","Chandler","Chula","Buffalo","Gilbert","Madison","Reno","North","Toledo","Fort","Irving","Lubbock","St","Laredo","Chesapeake","Winston","Glendale","Garland","Scottsdale","Arlington","Enterprise","Boise","Santa","Norfolk","Fremont","Spokane","Richmond","Baton","San","Tacoma","Spring","Hialeah","Huntsville","Modesto","Frisco","Des","Yonkers","Port","Moreno","Worcester","Rochester","Fontana","Columbus","Fayetteville","Sunrise","McKinney","Little","Augusta","Oxnard","Salt","Amarillo","Overland","Cape","Grand","Huntington","Sioux","Grand","Montgomery","Tallahassee","Birmingham","Peoria","Glendale","Vancouver","Providence","Knoxville","Brownsville","Akron","Newport","Fort","Mobile","Shreveport","Paradise","Tempe","Chattanooga","Cary","Eugene","Elk","Santa","Salem","Ontario","Aurora","Lancaster","Rancho","Oceanside","Fort","Pembroke","Clarksville","Palmdale","Garden","Springfield","Hayward","Salinas","Alexandria","Paterson","Murfreesboro","Bayamon","Sunnyvale","Kansas","Lakewood","Killeen","Corona","Bellevue","Springfield","Charleston","Hollywood","Roseville","Pasadena","Escondido","Pomona","Mesquite","Naperville","Joliet","Savannah","Jackson","Bridgeport","Syracuse","Surprise","Rockford","Torrance","Thornton","Kent","Fullerton","Denton","Visalia","McAllen")
+        # for x in cities:
+        #     transaction = Transaction(
+        #         amountKg = random.randint(1, 20),
+        #         branchName = x
+        #     )
+        #     transaction.save()
         transactions = Transaction.objects.filter(
             amountKg__range=(request.POST["Min"], request.POST["Max"]))  # TODO: Add filter user
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
@@ -132,7 +134,6 @@ def show_transaction_user_range(request):
 
 # @login_required(login_url='/login/')
 def show_transaction_user_specific(request):
-    print(request)
     form = FindTransactionForm(request.POST)
     if form.is_valid():
         form = form.save(commit=False)
