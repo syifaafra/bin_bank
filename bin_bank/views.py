@@ -28,30 +28,40 @@ def register(request):
     return render(request, 'register.html', context)
 
 
+# Fungsi untuk menampilkan homepage
 def homepage(request):
+    username = request.user.username
     total_feedback = Feedback.objects.count()
+    data_transaction = Transaction.objects.all()
     data_article = Article.objects.all()
+
+    total_waste = 0
+    for transaction in data_transaction:
+        total_waste += transaction.amountKg
+
     context = {
+        'username': username,
         'shared_story': total_feedback,
-        'articles': data_article
+        'waste_collected': total_waste, 
+        'articles': data_article,
     }
+
     return render(request, 'homepage.html', context)
 
 
 def add_feedback(request):
     if request.method == 'POST':
         feedback = request.POST.get("feedback")
-        new_feedback = Feedback(feedback=feedback)
+        name = request.POST.get("name")
+        if name == "":
+            new_feedback = Feedback(feedback=feedback,name="ANONYM")
+        else:
+            new_feedback = Feedback(feedback=feedback,name=name)
         new_feedback.save()
 
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
-
-
-def article_detail(request, slug):
-    return render(request, "article_detail.html")
-
 
 # Fungsi untuk mengembalikan seluruh data task dalam bentuk JSON
 def show_feedback_json(request):
