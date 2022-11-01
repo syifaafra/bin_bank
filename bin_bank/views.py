@@ -31,10 +31,18 @@ def register(request):
 # Fungsi untuk menampilkan homepage
 def homepage(request):
     username = request.user.username
+    total_feedback = Feedback.objects.count()
+    data_transaction = Transaction.objects.all()
     data_article = Article.objects.all()
+
+    total_waste = 0
+    for transaction in data_transaction:
+        total_waste += transaction.amountKg
 
     context = {
         'username': username,
+        'shared_story': total_feedback,
+        'waste_collected': total_waste, 
         'articles': data_article,
     }
 
