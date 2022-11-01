@@ -3,45 +3,24 @@
 
 {% block meta %}
 <title>Hello, world!</title>
+<link rel="icon" type="image/x-icon" href="/static/logo.png">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.theme.default.min.css">
+<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 <link rel="stylesheet" href="{% static 'bin_bank.css' %}">
+
+<!-- JS Bootstrap  -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
 {% endblock meta %}
 
 {% block content %}
 <body data-bs-spy="scroll" data-bs-target=".navbar">
-
-    <!-- Navbar section -->
-    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-white">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'bin_bank:homepage' %}">BIN BANK.</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bin_bank:homepage' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bin_bank:leaderboard' %}">Leaderboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bin_bank:deposit_sampah' %}">Donate</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bin_bank:show_history' %}">History</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bin_bank:login' %}">Login</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+    {% include 'navbar.html' %}
     <!-- Welcome Section -->
     <section id="home" class="bg-cover hero-section" style="background-image: url(static/hero-carousel/hero-carousel-1.jpg);">
         <div class="overlay"></div>
@@ -115,7 +94,7 @@
                 <div class="col-md-3"></div>
                 <div class="col-md-3">
                     <i class="icon-camera h1"></i>
-                    <h1 class="mt-3 mb-2">120 kg</h1>
+                    <h1 class="mt-3 mb-2">{{waste_collected}}</h1>
                     <p>Waste Collected</p>
                 </div>
                 <div class="col-md-3">
@@ -129,32 +108,43 @@
     </section>
     <!-- End Our Project Section -->
 
-    <!-- Our Story -->
+    <!-- Our Testimonials -->
     <section id="testimonial_area" class="section_padding">
         <div class="container">
             <div class="row">
                 <div class="col-12 section-intro text-center">
-                    <h1>Our Story </h1>
+                    <h1>Our Testimonials </h1>
                     <div class="divider"></div>
                     <p> Here are some stories of people using Bin Bank to manage their waste. 
                         <br> It's now your time to make one for the community and enviroment!</p>
                 </div>
-                <div class="col-md-12">
-                    <div id="feedback-cards" class="testmonial_slider_area text-center owl-carousel">
-                    </div>
-                </div>
+                <div id="feedback-cards"></div>
             </div>
         </div>
     </section>
     <!-- End Our Story Section -->
-
+    
     <!-- Article Section -->
-    <section class="bg-cover" style="background-image: url(static/hero-carousel/hero-carousel-3.jpg);">
-        <div class="overlay"></div>
-            <div class="container text-white text-center"><div class="col-12 section-intro text-center">
-                <h1>Articles</h1>
-                <div class="divider"></div>
-                <p> Dive into your local chapter and find out how waste has been managed in the community.</p>
+    <section id="testimonial_area" class="bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 section-intro text-center">
+                    <h1>Articles</h1>
+                    <div class="divider"></div>
+                    <p>Find out what's happening in our community. Let's save the future of our community and environment.</p>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="testmonial_slider_area owl-carousel">
+                    {% for article in articles %}
+                    <div class="box-area">	
+                        <img src="{{article.image}}" alt="">
+                        <h5 class="mt-1 mb-2">{{article.title}}</h5>
+                        <p>{{article.intro}}</p>
+                        <a href="{{article.source}}"><button class="btn btn-main" type="submit">Read More</button></a>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </section>
@@ -183,13 +173,19 @@
                 <div class="col-12 section-intro text-center">
                     <h1>Feedback</h1>
                     <div class="divider"></div>
-                    <p>Share your experience in using Bin Bank to the community and help us to improve. Don't worry, it's anonymous!</p>
+                    <p>Share your experience in using Bin Bank to the community and help us to improve.</p>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-8 mx-auto">
                     <form id="form-feedback" action="#" class="row g-4">
                         {% csrf_token %}
+                        <div class="form-group col-md-6">
+                            <input name="name" id="name" type="text" class="form-control" placeholder="Name">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <p>If you want to keep it anonymous, just leave the name field blank!</p>
+                        </div>
                         <div class="form-group col-md-12">
                             <textarea name="feedback" id="feedback" cols="30" rows="4" class="form-control" placeholder="Message"></textarea>
                         </div>
@@ -231,15 +227,20 @@
   async function refreshFeedback() {
         document.getElementById("feedback-cards").innerHTML = ""
         const feedback = await getFeedback()
-        let htmlString = ``
+        let htmlString = `<div class="row">`
         feedback.forEach((message) => {
           htmlString += `
-                <div class="box-area">	
-                    <h5>ANONYM</h5>									
-                    <p class="content">${message.fields.feedback}</p>
-                    <span>${message.fields.date}</span>
+                <div class="col-sm-6">
+                    <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">${message.fields.name}</h5>
+                        <p class="date">Posted at ${message.fields.date}</p>
+                        <p>${message.fields.feedback}</p>
+                    </div>
+                    </div>
                 </div>` 
         })
+        htmlString += `</div>`
         document.getElementById("feedback-cards").innerHTML = htmlString
   }
 
@@ -250,6 +251,7 @@
         }).then(refreshFeedback)
         
         document.getElementById('feedback').value = ''
+        document.getElementById('name').value = ''
     return false
   }
 
