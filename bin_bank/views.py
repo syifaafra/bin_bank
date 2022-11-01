@@ -31,16 +31,10 @@ def register(request):
 # Fungsi untuk menampilkan homepage
 def homepage(request):
     username = request.user.username
-    data_transaction = Transaction.objects.all()
     data_article = Article.objects.all()
-
-    total_waste = 0
-    for transaction in data_transaction:
-        total_waste += transaction.amountKg
 
     context = {
         'username': username,
-        'waste_collected': total_waste, 
         'articles': data_article,
     }
 
