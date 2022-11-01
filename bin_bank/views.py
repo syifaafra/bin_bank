@@ -182,5 +182,5 @@ def show_leaderboard(request):
 
 
 def leaderboard(request):
-    context = {}
+    context = {'username':request.user.username}
     return render(request, "leaderboard.html", context)

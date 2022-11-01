@@ -6,7 +6,15 @@
 
 {% block content %}
     {% include 'navbar.html' %}
-    <div class="mt-5 col-md-8 mx-auto">
+    <br>
+    <div class="container text-black text-center mt-5">
+        <div class="row">
+            <div class="col-12">
+                    <h1 class="display-4">LEADERBOARD</h1>
+            </div>
+        </div>
+    </div>
+    <div class="mt-2 col-md-8 mb-3 mx-auto">
         <table class="table table-sm table-striped">
             <thead class="thead-dark">
                 <tr>
@@ -18,11 +26,16 @@
             <tbody id="leaderboard">
             </tbody>
         </table>
+        <div id="leaderboardFooter"></div>
+        <div id="loginCheck">
+            Kamu belum login. Silakan <a href="{% url 'bin_bank:login' %}">login</a> untuk melihat peringkatmu di leaderboard.
+        </div>
     </div>
 
+    <p id="userId" style="display:none">{{username}}</p>
     <script>
         async function getLeaderboard(){
-            return fetch("json/leaderboard").then((res) => res.json())
+            return fetch("../json/leaderboard").then((res) => res.json())
         }
     
         async function refreshLeaderboard() {
@@ -30,19 +43,51 @@
             const leaderboard = await getLeaderboard()
             let htmlString = ''
             let count = 1
-            leaderboard.forEach((item)=>{
+            let username = document.getElementById("userId").innerHTML
+            let inLeaderboard = false
+            let rank=0
+
+            leaderboard.every((item)=>{
                 if(item.fields.is_admin == false){
-                    htmlString +=`
-                    <tr>
-                        <th scope="row">${count}</th>
-                        <td>${item.fields.username}</td>
-                        <td>${item.fields.points}</td>
-                    </tr>
-                    `
+                    if (item.fields.username == username){
+                        htmlString +=`
+                        <tr class="bg-warning">
+                            <th scope="row">${count}</th>
+                            <td>${item.fields.username}</td>
+                            <td>${item.fields.points}</td>
+                        </tr>
+                        `
+                        inLeaderboard = true;
+                        rank=count
+                    }
+                    else{
+                        htmlString +=`
+                        <tr>
+                            <th scope="row">${count}</th>
+                            <td>${item.fields.username}</td>
+                            <td>${item.fields.points}</td>
+                        </tr>
+                        `   
+                    }
                     count+=1
+                if(count==11){return false;}
+                return true;
                 }
             })
+            if(inLeaderboard==true){
+                footerString = `Selamat, ${username}! kamu berada di <b>peringkat ${rank}</b> leaderboard!<br>`
+                footerString += `Pertahankan peringkatmu dengan tetap melakukan donasi sampah!`
+                document.getElementById("loginCheck").style="display:none"
+            }
+            else{
+                if(username!=""){
+                    footerString = `Wah, poin kamu belum cukup untuk masuk leaderboard.<br>`
+                    footerString += `Tingkatkan poinmu dengan melakukan donasi sampah!`
+                    document.getElementById("loginCheck").style="display:none"
+                }
+            }
             document.getElementById("leaderboard").innerHTML=htmlString
+            document.getElementById("leaderboardFooter").innerHTML=footerString
         }
         refreshLeaderboard()
     </script>
