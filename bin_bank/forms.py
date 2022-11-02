@@ -1,6 +1,8 @@
 from xml.dom import ValidationErr
 from django import forms
 from django.forms import ModelForm
+from bin_bank.models import MyUser, Transaction
+from django.core.exceptions import ValidationError
 from bin_bank.models import MyUser, Transaction, SupportMessage
 
 
@@ -8,10 +10,25 @@ class FindTransactionForm(ModelForm):
     class Meta:
         model = Transaction
         fields = [
-            'amountKg',
             'branchName'
         ]
 
+    def clean_branchName(self):  
+        branchName = self.cleaned_data['branchName']
+        new = Transaction.objects.filter(branchName = branchName)  
+        if new.count()==0:
+            raise ValidationError("Cabang tidak terdaftar")  
+        return branchName  
+
+    # def clean_amountKg(self):  
+    #     amountKg = self.cleaned_data['amountKg']
+    #     if amountKg==0 or amountKg == None:
+    #         raise ValidationError("Tidak bisa nol")  
+    #     return amountKg
+
+
+    
+    
 
 class FeedbackForm(forms.Form):
     feedback = forms.CharField(label="Comment", required=True, max_length=100,
