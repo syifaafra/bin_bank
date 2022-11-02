@@ -189,7 +189,7 @@ def add_transaction(request):
         response_data['result'] = 'Create post successful!'
         response_data['username'] = transaction.user.username
         response_data['pk'] = transaction.pk
-        response_data['date'] = transaction.date.now()
+        response_data['date'] = transaction.date.strftime('%B %d, %Y %I:%M %p')
         response_data['amountKg'] = transaction.amountKg
         response_data['branchName'] = transaction.branchName
         response_data['isFinished'] = transaction.isFinished
