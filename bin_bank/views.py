@@ -1,5 +1,5 @@
-import random
-from django.core.serializers import json
+import json
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.core import serializers
@@ -174,19 +174,20 @@ def add_transaction(request):
         transaction.save()
 
         response_data['result'] = 'Create post successful!'
-        response_data['user'] = transaction.user
+        response_data['username'] = transaction.user.username
         response_data['pk'] = transaction.pk
         response_data['amountKg'] = transaction.amountKg
         response_data['branchName'] = transaction.branchName
-        response_data['date'] = transaction.date
         response_data['isFinished'] = transaction.isFinished
 
         return HttpResponse(
-            serializers.serialize("json", transaction), content_type="application/json"  # type: ignore
+            json.dumps(response_data),
+            content_type="application/json"
         )
     else:
         return HttpResponse(
-            serializers.serialize("json", {"nothing to see": "Something happened"}), content_type="application/json"  # type: ignore
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
         )
 
 
