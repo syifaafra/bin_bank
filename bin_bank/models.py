@@ -87,3 +87,8 @@ class Article(models.Model):
 class Feedback(models.Model):
     date = models.DateTimeField(default=timezone.now)
     feedback = models.TextField()
+
+class SupportMessage(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    date = models.DateField(auto_now=True)
+    message = models.TextField()
