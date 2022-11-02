@@ -14,8 +14,18 @@ class FindTransactionForm(ModelForm):
 
 
 class FeedbackForm(forms.Form):
-    feedback = forms.CharField(label="Comment", required=True, max_length=100,
-                               widget=forms.Textarea(attrs={'type': 'text', 'placeholder': 'Write your feedback'}))
+    subject = forms.CharField(max_length=255, required=False, widget=forms.TextInput(
+        attrs = {
+            'class': 'form-control',
+            'placeholder' : 'Subject'
+        }))
+
+    feedback = forms.CharField(required=False, widget=forms.Textarea(
+        attrs = {
+            'class': 'form-control',
+            'placeholder' : 'Write your message',
+            'rows': 4
+        }))
 
 
 class RegisterForm(forms.ModelForm):
