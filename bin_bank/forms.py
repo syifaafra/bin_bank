@@ -1,7 +1,7 @@
 from xml.dom import ValidationErr
 from django import forms
 from django.forms import ModelForm
-from bin_bank.models import MyUser, Transaction
+from bin_bank.models import MyUser, Transaction, SupportMessage
 
 
 class FindTransactionForm(ModelForm):
@@ -52,3 +52,8 @@ class AddTransactionForm(ModelForm):
             'amountKg',
             'branchName'
         ]
+
+class SupportMessageForm(ModelForm):
+    class Meta:
+        model = SupportMessage
+        fields = ['message']

@@ -7,9 +7,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
-from bin_bank.models import Article, Feedback, MyUser, Transaction
+from bin_bank.models import Article, Feedback, MyUser, SupportMessage, Transaction
 from django.views.decorators.csrf import csrf_exempt
-from bin_bank.forms import RegisterForm
+from bin_bank.forms import RegisterForm, SupportMessageForm
 from bin_bank.forms import FeedbackForm, RegisterForm, FindTransactionForm
 from django.views.decorators.csrf import csrf_exempt
 
@@ -182,5 +182,33 @@ def show_leaderboard(request):
 
 
 def leaderboard(request):
-    context = {'username':request.user.username}
+    form = SupportMessageForm
+    context = {
+        'username':request.user.username,
+        'form':form
+        }
     return render(request, "leaderboard.html", context)
+
+def show_support_message(request):
+    message_data = SupportMessage.objects.all().order_by('?')[:12]
+    data = []
+    for item in message_data:
+        data.append({
+            'username':item.user.username,
+            'date':item.date,
+            'message':item.message
+        })
+    data = {'data':data}
+    return JsonResponse(data)
+
+def add_support_message(request):
+    if request.method == 'POST':
+        user = request.user
+        message = request.POST.get("message")
+
+        new_message = SupportMessage(user=user, message=message)
+        new_message.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
