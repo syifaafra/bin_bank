@@ -6,45 +6,205 @@
 
 {% block content %}
     {% include 'navbar.html' %}
-    <div class="mt-5 col-md-8 mx-auto">
-        <table class="table table-sm table-striped">
-            <thead class="thead-dark">
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Total Poin</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboard">
-            </tbody>
-        </table>
-    </div>
+    <section>
+        <div class="container text-black text-center">
+            <div class="row">
+                <div class="col-12">
+                        <p class="display-5">LEADERBOARD</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-2 col-md-8 mb-3 mx-auto">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Total Poin</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard">
+                </tbody>
+            </table>
+            <div id="leaderboardFooter"></div>
+            <div id="loginCheck">
+                Kamu belum login. Silakan <a href="{% url 'bin_bank:login' %}">login</a> untuk melihat peringkatmu di leaderboard.
+            </div>
+        </div>
+    </section> 
+    <section id="support">
+        <div class="overlay"></div>
+        <div class="container">
+                <div class="row">
+                    <div class="col-12 section-intro text-center">
+                        <h1>Pesan dukungan</h1>
+                        <div class="divider"></div>
+                        <p>Dari masyarakat agar kamu lebih termotivasi untuk meningkatkan poin sekaligus menjaga lingkungan</p>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-md-2 g-4" id="mycard"></div>
+        </div>
+        <div class="container">
+            {% if username != "" %}
+                <div class="row">
+                    <div class="col-12 section-intro text-center mt-5">
+                        <h1>Kirim pesan dukunganmu sekarang!</h1>
+                        <p>Pesan dapat berupa semangat, saran, atau tips-tips seputar pengelolaan sampah</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mt-2 col-md-8 mb-3 mx-auto">
+                        <div class="col-12 section-intro text-center">
+                                <form method="POST" id="create_support_message">
+                                    {% csrf_token %}
+                                    <table class="table table-striped table-bordered table-hover">  
+                                        {{ form.as_table }}  
+                                        <td></td>
+                                        <td>
+                                            <div class="text-center">
+                                                <button id="SupportMessageButton" class="btn btn-main" type="submit">Kirim Pesan</button>
+                                            </div>
+                                        </td> 
+                                    </table>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-12 section-intro text-center mt-5">
+                        <h3>Silakan <a href="{% url 'bin_bank:login' %}">login</a> terlebih dahulu untuk mengirim pesan dukungan</h3>
+                    </div>
+                </div>
+            {% endif %}
+    </section>
 
+    <footer class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">Copyright © 2022. Bin Bank</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div>
+                        <a href="#"><i class='bx bxl-facebook-circle'></i></a>
+                        <a href="#"><i class='bx bxl-twitter'></i></a>
+                        <a href="#"><i class='bx bxl-dribbble'></i></a>
+                        <a href="#"><i class='bx bxl-instagram'></i></a>
+                        <a href="#"><i class='bx bxl-github'></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <p id="userId" style="display:none">{{username}}</p>
     <script>
-        async function getLeaderboard(){
-            return fetch("json/leaderboard").then((res) => res.json())
+
+        function addSupportMessage(){
+            fetch("add-support-message", {
+                method: "POST",
+                body: new FormData(document.querySelector('#create_support_message'))
+            }).then(refreshSupportMessage)
+            var frm = document.getElementById("create_support_message")
+            frm.reset()
+            return false
         }
-    
+
+        async function getSupportMessage(){
+            return fetch("../json/support-message").then((res) => res.json())
+        }
+
+        async function getLeaderboard(){
+            return fetch("../json/leaderboard").then((res) => res.json())
+        }
+        
+        async function refreshSupportMessage() {
+            document.getElementById("mycard").innerHTML = ""
+            const message = await getSupportMessage()
+            let htmlString = ''
+            message.data.forEach((item) => {
+            htmlString += `
+                    <div class="col">
+                        <div class="card" style="width: 14rem; height:20rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">${item.username}</h5>
+                                <p class="card-text">${item.message}</p>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">${item.date}</small>
+                            </div>
+                        </div>
+                    </div>`
+            })
+            document.getElementById("mycard").innerHTML = htmlString
+        }
+
         async function refreshLeaderboard() {
             document.getElementById("leaderboard").innerHTML = ""
             const leaderboard = await getLeaderboard()
             let htmlString = ''
+            let footerString = ''
             let count = 1
-            leaderboard.forEach((item)=>{
+            let username = document.getElementById("userId").innerHTML
+            let inLeaderboard = false
+            let rank=0
+
+            leaderboard.every((item)=>{
                 if(item.fields.is_admin == false){
-                    htmlString +=`
-                    <tr>
-                        <th scope="row">${count}</th>
-                        <td>${item.fields.username}</td>
-                        <td>${item.fields.points}</td>
-                    </tr>
-                    `
+                    if (item.fields.username == username){
+                        htmlString +=`
+                        <tr class="bg-warning">
+                            <th scope="row">${count}</th>
+                            <td>${item.fields.username}</td>
+                            <td>${item.fields.points}</td>
+                        </tr>
+                        `
+                        inLeaderboard = true;
+                        rank=count
+                    }
+                    else{
+                        htmlString +=`
+                        <tr>
+                            <th scope="row">${count}</th>
+                            <td>${item.fields.username}</td>
+                            <td>${item.fields.points}</td>
+                        </tr>
+                        `   
+                    }
                     count+=1
+                if(count==11){return false;}
+                return true;
                 }
             })
+            if(inLeaderboard==true){
+                footerString = `Selamat, ${username}! kamu berada di <b>peringkat ${rank}</b> leaderboard!<br>`
+                footerString += `Pertahankan peringkatmu dengan tetap melakukan donasi sampah!`
+                document.getElementById("loginCheck").style="display:none"
+            }
+            else{
+                if(username!=""){
+                    footerString = `Wah, poin kamu belum cukup untuk masuk leaderboard.<br>`
+                    footerString += `Tingkatkan poinmu dengan melakukan donasi sampah!`
+                    document.getElementById("loginCheck").style="display:none"
+                }
+            }
             document.getElementById("leaderboard").innerHTML=htmlString
+            document.getElementById("leaderboardFooter").innerHTML=footerString
         }
+
+        try{
+            document.getElementById("SupportMessageButton").onclick = addSupportMessage;
+            var textarea = document.getElementsByName("message")[0]
+            textarea.cols = "30"
+            textarea.rows = "9"
+        }
+        catch(err){
+        }
+
         refreshLeaderboard()
+        refreshSupportMessage()
     </script>
 {% endblock content %}
 

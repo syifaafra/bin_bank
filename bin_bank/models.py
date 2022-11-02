@@ -77,13 +77,16 @@ class MyUser(AbstractBaseUser):
 
 class Article(models.Model):
     title = models.CharField(max_length=100)
-    slug = models.SlugField()
     intro = models.TextField()
     image = models.CharField(max_length=500)
-    news = models.TextField()
-    source = models.TextField()
-
+    source = models.URLField()
 
 class Feedback(models.Model):
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateField(default=timezone.now)
+    name = models.CharField(max_length=255)
     feedback = models.TextField()
+
+class SupportMessage(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    date = models.DateField(auto_now=True)
+    message = models.TextField()

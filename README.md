@@ -9,7 +9,7 @@
 - Amanda Christie Tarigan - 2106751322 
 
 ## 🌐 Tautan 🌐
-https://bin-bank.herokuapp.com
+https://bin-bank-d09.herokuapp.com/
 
 ## 📜 Cerita Aplikasi 📜
 
