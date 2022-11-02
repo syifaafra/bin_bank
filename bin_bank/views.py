@@ -1,3 +1,4 @@
+from django.core.serializers import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.core import serializers
@@ -12,6 +13,17 @@ from django.views.decorators.csrf import csrf_exempt
 from bin_bank.forms import RegisterForm, SupportMessageForm
 from bin_bank.forms import FeedbackForm, RegisterForm, FindTransactionForm
 from django.views.decorators.csrf import csrf_exempt
+
+from django.views.generic.edit import CreateView
+from django.contrib.auth.forms import UserCreationForm
+
+
+# signup and signin kausar
+
+
+class signup(CreateView):
+    form_class = UserCreationForm
+    template_name = "signup.html"
 
 
 @csrf_exempt
@@ -42,7 +54,7 @@ def homepage(request):
     context = {
         'username': username,
         'shared_story': total_feedback,
-        'waste_collected': total_waste, 
+        'waste_collected': total_waste,
         'articles': data_article,
     }
 
@@ -54,14 +66,15 @@ def add_feedback(request):
         feedback = request.POST.get("feedback")
         name = request.POST.get("name")
         if name == "":
-            new_feedback = Feedback(feedback=feedback,name="ANONYM")
+            new_feedback = Feedback(feedback=feedback, name="ANONYM")
         else:
-            new_feedback = Feedback(feedback=feedback,name=name)
+            new_feedback = Feedback(feedback=feedback, name=name)
         new_feedback.save()
 
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
+
 
 # Fungsi untuk mengembalikan seluruh data task dalam bentuk JSON
 def show_feedback_json(request):
@@ -157,24 +170,29 @@ def deposit_sampah(request):
 
 
 def add_transaction(request):
-    return redirect('bin_bank:deposit_sampah')
-    # if request.method != 'POST':
-    #     return redirect('bin_bank:deposit_sampah')
-    #
-    # form = request.POST
-    # if form.is_valid():
-    #     new_transaction = form.save(commit=False)
-    #     new_transaction.user = request.user
-    #     new_transaction.save()
-    #     form.save_m2m()
-    #     return JsonResponse({
-    #         'user': new_transaction.user,
-    #         'pk': new_transaction.pk,
-    #         'date': new_transaction.date,
-    #         'amountKg': new_transaction.amountKg,
-    #         'branchName': new_transaction.branchName,
-    #         'isFinished': new_transaction.isFinished,
-    #     })
+    if request.method == 'POST':
+        amountKg = request.POST.get('amountKg')
+        branchName = request.POST.get('branchName')
+        response_data = {}
+
+        transaction = Transaction(amountKg=amountKg, branchName=branchName, user=request.user)
+        transaction.save()
+
+        response_data['result'] = 'Create post successful!'
+        response_data['user'] = transaction.user
+        response_data['pk'] = transaction.pk
+        response_data['amountKg'] = transaction.amountKg
+        response_data['branchName'] = transaction.branchName
+        response_data['date'] = transaction.date
+        response_data['isFinished'] = transaction.isFinished
+
+        return HttpResponse(
+            serializers.serialize("json", transaction), content_type="application/json"
+        )
+    else:
+        return HttpResponse(
+            serializers.serialize("json", {"nothing to see": "Something happened"}), content_type="application/json"
+        )
 
 
 def show_leaderboard(request):
@@ -185,22 +203,24 @@ def show_leaderboard(request):
 def leaderboard(request):
     form = SupportMessageForm
     context = {
-        'username':request.user.username,
-        'form':form
-        }
+        'username': request.user.username,
+        'form': form
+    }
     return render(request, "leaderboard.html", context)
+
 
 def show_support_message(request):
     message_data = SupportMessage.objects.all().order_by('?')[:12]
     data = []
     for item in message_data:
         data.append({
-            'username':item.user.username,
-            'date':item.date,
-            'message':item.message
+            'username': item.user.username,
+            'date': item.date,
+            'message': item.message
         })
-    data = {'data':data}
+    data = {'data': data}
     return JsonResponse(data)
+
 
 def add_support_message(request):
     if request.method == 'POST':
