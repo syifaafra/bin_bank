@@ -19,12 +19,6 @@ from django.views.generic.edit import CreateView
 from django.contrib.auth.forms import UserCreationForm
 
 
-# signup and signin kausar
-
-
-class signup(CreateView):
-    form_class = UserCreationForm
-    template_name = "signup.html"
 
 
 @csrf_exempt
@@ -165,11 +159,11 @@ def show_transaction_user_specific(request):
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method")
 
-
+@login_required(login_url='/login/')
 def deposit_sampah(request):
     return render(request, "deposit_sampah.html")
 
-
+@login_required(login_url='/login/')
 def add_transaction(request):
     if request.method == 'POST':
         amountKg = request.POST.get('amountKg')
