@@ -214,7 +214,7 @@ def show_transaction(request):
 @login_required(login_url='/login/')
 def delete_transaction(request):
     transactions = Transaction.objects.all().delete()
-    return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+    redirect('bin_bank:deposit_sampah')
 
 def show_leaderboard(request):
     user_data = MyUser.objects.all().order_by('-points')
