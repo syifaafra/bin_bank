@@ -9,8 +9,13 @@
 {% load static %}
 <section class="main">
 	<div class="layer">
-
-        <h1>Login</h1>
+        <div class="container text-black text-center">
+            <div class="row">
+                <div class="col-12">
+                        <p class="display-5">LOGIN</p>
+                </div>
+            </div>
+        </div>
         <form method="POST" action="">
             {% csrf_token %}
             <div class="mx-auto card align-items-center mb-3 w-50 " >
@@ -28,15 +33,16 @@
 
                             <tr>
                                 <td></td>
-                                <td><input class="btn login_btn" type="submit" value="Login"></td>
+                                <td><input class="btn btn-main" type="submit" value="Login"></td>
                             </tr>
                         </table>
-                        Belum mempunyai akun? <a href="{% url 'bin_bank:register' %}">Buat Akun</a>
                 </div>
             </div>
         </form>
-    
-
+        <div class="text-center" style="margin-top: 15px">
+            Belum mempunyai akun? <a href="{% url 'bin_bank:register' %}">Buat Akun</a>
+        </div>
+       
     {% if messages %}
         <ul>
             {% for message in messages %}

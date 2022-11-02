@@ -1,5 +1,5 @@
-import random
-from django.core.serializers import json
+import json
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.core import serializers
@@ -19,12 +19,6 @@ from django.views.generic.edit import CreateView
 from django.contrib.auth.forms import UserCreationForm
 
 
-# signup and signin kausar
-
-
-class signup(CreateView):
-    form_class = UserCreationForm
-    template_name = "signup.html"
 
 
 @csrf_exempt
@@ -99,21 +93,21 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('bin_bank:login')
+    return redirect('bin_bank:homepage')
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_history(request):
-    # context = {
-    #     'username': request.user.username,
-    #     'last_login': request.COOKIES['last_login'],
-    # }
+    # TODO: Sessions
     form = FindTransactionForm()
-    context = {'form': form}
+    context = {
+        'username': request.user.username,
+        'form': form
+    }
     return render(request, "history.html", context)
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def update_transaction(request, id):
     transaction_list = Transaction.objects.filter(id=id)
     transaction = transaction_list[0]
@@ -122,54 +116,48 @@ def update_transaction(request, id):
     return redirect('bin_bank:show_history')
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user(request):
-    transactions = Transaction.objects.all() # TODO: Add filter user
+    transactions = Transaction.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_ongoing(request):
-    transactions = Transaction.objects.filter(isFinished=False)  # TODO: Add filter user
+    transactions = Transaction.objects.filter(user=request.user, isFinished=False)  
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_success(request):
-    transactions = Transaction.objects.filter(isFinished=True)  # TODO: Add filter user
+    transactions = Transaction.objects.filter(user=request.user, isFinished=True)  
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
-        # cities =("New","Los","Chicago","Houston","Phoenix","Philadelphia","San","San","Dallas","San","Austin","Jacksonville","Fort","Columbus","Charlotte","Indianapolis","San","Seattle","Denver","Washington","Nashville","Oklahoma","Boston","El","Portland","Las","Memphis","Detroit","Baltimore","Milwaukee","Albuquerque","Fresno","Tucson","Sacramento","Kansas","Mesa","Atlanta","Omaha","Colorado","Raleigh","Long","Virginia","Miami","Oakland","Minneapolis","Tulsa","Bakersfield","Wichita","Arlington","Aurora","Tampa","New","Cleveland","Honolulu","Anaheim","Louisville","Henderson","Lexington","Irvine","Stockton","Orlando","Corpus","Newark","Riverside","St","Cincinnati","San","Santa","Greensboro","Pittsburgh","Jersey","St","Lincoln","Durham","Anchorage","Plano","Chandler","Chula","Buffalo","Gilbert","Madison","Reno","North","Toledo","Fort","Irving","Lubbock","St","Laredo","Chesapeake","Winston","Glendale","Garland","Scottsdale","Arlington","Enterprise","Boise","Santa","Norfolk","Fremont","Spokane","Richmond","Baton","San","Tacoma","Spring","Hialeah","Huntsville","Modesto","Frisco","Des","Yonkers","Port","Moreno","Worcester","Rochester","Fontana","Columbus","Fayetteville","Sunrise","McKinney","Little","Augusta","Oxnard","Salt","Amarillo","Overland","Cape","Grand","Huntington","Sioux","Grand","Montgomery","Tallahassee","Birmingham","Peoria","Glendale","Vancouver","Providence","Knoxville","Brownsville","Akron","Newport","Fort","Mobile","Shreveport","Paradise","Tempe","Chattanooga","Cary","Eugene","Elk","Santa","Salem","Ontario","Aurora","Lancaster","Rancho","Oceanside","Fort","Pembroke","Clarksville","Palmdale","Garden","Springfield","Hayward","Salinas","Alexandria","Paterson","Murfreesboro","Bayamon","Sunnyvale","Kansas","Lakewood","Killeen","Corona","Bellevue","Springfield","Charleston","Hollywood","Roseville","Pasadena","Escondido","Pomona","Mesquite","Naperville","Joliet","Savannah","Jackson","Bridgeport","Syracuse","Surprise","Rockford","Torrance","Thornton","Kent","Fullerton","Denton","Visalia","McAllen")
-        # for x in cities:
-        #     transaction = Transaction(
-        #         amountKg = random.randint(1, 20),
-        #         branchName = x
-        #     )
-        #     transaction.save()
         transactions = Transaction.objects.filter(
-            amountKg__range=(request.POST["Min"], request.POST["Max"]))  # TODO: Add filter user
+            user=request.user, 
+            amountKg__range=(request.POST["Min"], 
+            request.POST["Max"]))  
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method", status_code=405)
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_specific(request):
     form = FindTransactionForm(request.POST)
     if form.is_valid():
         form = form.save(commit=False)
-        transactions = Transaction.objects.filter(amountKg=form.amountKg,
-                                                  branchName=form.branchName)  # TODO: Add filter user
+        transactions = Transaction.objects.filter(user=request.user, branchName = form.branchName)
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method")
 
-
+@login_required(login_url='/login/')
 def deposit_sampah(request):
     return render(request, "deposit_sampah.html")
 
-
+@login_required(login_url='/login/')
 def add_transaction(request):
     if request.method == 'POST':
         amountKg = request.POST.get('amountKg')
@@ -180,19 +168,20 @@ def add_transaction(request):
         transaction.save()
 
         response_data['result'] = 'Create post successful!'
-        response_data['user'] = transaction.user
+        response_data['username'] = transaction.user.username
         response_data['pk'] = transaction.pk
         response_data['amountKg'] = transaction.amountKg
         response_data['branchName'] = transaction.branchName
-        response_data['date'] = transaction.date
         response_data['isFinished'] = transaction.isFinished
 
         return HttpResponse(
-            serializers.serialize("json", transaction), content_type="application/json"
+            json.dumps(response_data),
+            content_type="application/json"
         )
     else:
         return HttpResponse(
-            serializers.serialize("json", {"nothing to see": "Something happened"}), content_type="application/json"
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
         )
 
 
