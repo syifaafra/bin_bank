@@ -19,8 +19,6 @@ from django.views.generic.edit import CreateView
 from django.contrib.auth.forms import UserCreationForm
 
 
-
-
 @csrf_exempt
 def register(request):
     form = RegisterForm()
@@ -133,22 +131,23 @@ def show_transaction_user(request):
 
 @login_required(login_url='/login/')
 def show_transaction_user_ongoing(request):
-    transactions = Transaction.objects.filter(user=request.user, isFinished=False)  
+    transactions = Transaction.objects.filter(user=request.user, isFinished=False)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
 @login_required(login_url='/login/')
 def show_transaction_user_success(request):
-    transactions = Transaction.objects.filter(user=request.user, isFinished=True)  
+    transactions = Transaction.objects.filter(user=request.user, isFinished=True)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+
 
 @login_required(login_url='/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
         transactions = Transaction.objects.filter(
-            user=request.user, 
-            amountKg__range=(request.POST["Min"], 
-            request.POST["Max"]))  
+            user=request.user,
+            amountKg__range=(request.POST["Min"],
+                             request.POST["Max"]))
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method", status_code=405)
 
@@ -158,13 +157,15 @@ def show_transaction_user_specific(request):
     form = FindTransactionForm(request.POST)
     if form.is_valid():
         form = form.save(commit=False)
-        transactions = Transaction.objects.filter(user=request.user, branchName = form.branchName)
+        transactions = Transaction.objects.filter(user=request.user, branchName=form.branchName)
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method")
+
 
 @login_required(login_url='/login/')
 def deposit_sampah(request):
     return render(request, "deposit_sampah.html")
+
 
 @login_required(login_url='/login/')
 def add_transaction(request):
@@ -176,9 +177,11 @@ def add_transaction(request):
         transaction = Transaction(amountKg=amountKg, branchName=branchName, user=request.user)
         transaction.save()
 
+
         response_data['result'] = 'Create post successful!'
         response_data['username'] = transaction.user.username
         response_data['pk'] = transaction.pk
+        response_data['date'] = transaction.date.strftime('%B %d, %Y %I:%M %p')
         response_data['amountKg'] = transaction.amountKg
         response_data['branchName'] = transaction.branchName
         response_data['isFinished'] = transaction.isFinished
@@ -193,6 +196,17 @@ def add_transaction(request):
             content_type="application/json"
         )
 
+
+@login_required(login_url='/login/')
+def show_transaction(request):
+    transactions = Transaction.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+
+
+@login_required(login_url='/login/')
+def delete_transaction(request):
+    transactions = Transaction.objects.all().delete()
+    return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 def show_leaderboard(request):
     user_data = MyUser.objects.all().order_by('-points')
@@ -214,13 +228,13 @@ def leaderboard(request):
 def find_username(request, username):
     if request.method == 'POST':
         username = request.POST.get("textinput")
-        if username=="":
+        if username == "":
             return redirect('../cari')
-        return redirect('../cari/'+username)
+        return redirect('../cari/' + username)
     user_data = MyUser.objects.all().order_by('-points')
     rank = 1
     is_found = False
-    context = {'username':request.user.username}
+    context = {'username': request.user.username}
 
     for user in user_data:
         if user.is_admin:
@@ -229,7 +243,7 @@ def find_username(request, username):
             is_found = True
             break
         rank += 1
-    
+
     context["searched_user"] = username
     context["is_found"] = False
 
@@ -239,14 +253,15 @@ def find_username(request, username):
 
     return render(request, "leaderboard_search.html", context)
 
+
 @csrf_exempt
 def find_username_menu(request):
     if request.method == 'POST':
         username = request.POST.get("textinput")
-        if username=="":
+        if username == "":
             return redirect('../leaderboard/cari')
-        return redirect('cari/'+username)
-    context = {'is_found':"", "username":request.user.username}
+        return redirect('cari/' + username)
+    context = {'is_found': "", "username": request.user.username}
     return render(request, "leaderboard_search.html", context)
 
 

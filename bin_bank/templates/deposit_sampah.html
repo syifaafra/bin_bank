@@ -10,6 +10,7 @@
 {% endblock meta %}
 
 {% block content %}
+    <body style="padding-top: 100px;" data-bs-spy="scroll" data-bs-target=".navbar">
 
     {# Navbar #}
     {% include 'navbar.html' %}
@@ -24,26 +25,28 @@
     </div>
 
 
-{#    <form method="POST" action="./add_transaction/" class="form-create-task" id="modal-form">#}
-{#        {% csrf_token %}#}
-{#        <div class="form-group">#}
-{#            <label for="branchName" class="control-label">Branch</label>#}
-{##}
-{#            <select name="branchName" id="branchName" style="width: 100%;">#}
-{#                <option value="branch_1">branch_1</option>#}
-{#                <option value="branch_2">branch_2</option>#}
-{#                <option value="branch_3">branch_3</option>#}
-{#            </select>#}
-{#        </div>#}
-{#        <div class="form-group">#}
-{#            <label for="amountKg" class="control-label">Berat Sampah(Kg)</label>#}
-{##}
-{#            <input type="number" name="amountKg" placeholder="100" min="0" cols="40" rows="10"#}
-{#                   required="" id="amountKg" class="form-control text-body border-dark">#}
-{#        </div>#}
-{##}
-{#        <input type ="submit">#}
-{#    </form>#}
+    {#    <form method="POST" action="./add_transaction/" class="form-create-task" id="modal-form">#}
+    {#        {% csrf_token %}#}
+    {#        <div class="form-group">#}
+    {#            <label for="branchName" class="control-label">Branch</label>#}
+    {##}
+    {#            <select name="branchName" id="branchName" style="width: 100%;">#}
+    {#                <option value="branch_1">branch_1</option>#}
+    {#                <option value="branch_2">branch_2</option>#}
+    {#                <option value="branch_3">branch_3</option>#}
+    {#            </select>#}
+    {#        </div>#}
+    {#        <div class="form-group">#}
+    {#            <label for="amountKg" class="control-label">Berat Sampah(Kg)</label>#}
+    {##}
+    {#            <input type="number" name="amountKg" placeholder="100" min="0" cols="40" rows="10"#}
+    {#                   required="" id="amountKg" class="form-control text-body border-dark">#}
+    {#        </div>#}
+    {##}
+    {#        <input type ="submit">#}
+    {#    </form>#}
+    <div id="errors"></div> <!-- errors go here -->
+
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -92,12 +95,30 @@
         </div>
     </div>
 
-    <div id="card-list">
+    <ul id="card-list">
 
-        {% comment %}
-        {% endcomment %}
 
-    </div>
+    </ul>
+    </body>
+    <footer class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">Copyright © 2022. Bin Bank</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div>
+                        <a href="#"><i class="bx bxl-facebook-circle"></i></a>
+                        <a href="#"><i class="bx bxl-twitter"></i></a>
+                        <a href="#"><i class="bx bxl-dribbble"></i></a>
+                        <a href="#"><i class="bx bxl-instagram"></i></a>
+                        <a href="#"><i class="bx bxl-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
 
 
     <script>
@@ -107,24 +128,23 @@
         function add_transaction() {
             console.log("add transaction is working!") // sanity check
             $.ajax({
-                url : "./add_transaction/", // the endpoint
-                type : "POST", // http method
-                data : {
-                    amountKg : $('#amountKg').val(),
-                    branchName : $('#branchName').val(),
+                url: "./add_transaction/", // the endpoint
+                type: "POST", // http method
+                data: {
+                    amountKg: $('#amountKg').val(),
+                    branchName: $('#branchName').val(),
                 }, // data sent with the post request
 
                 // handle a successful response
-                success : function(json) {
-                    $('#amountKg').val('');
-                    $('#branchName').val('');// remove the value from the input
+                success: function (json) {
                     console.log(json); // log the returned json to the console
+                    $("#card-list").prepend("<li><strong>" + json.date + "</strong> - <em> " + json.amountKg + "</em> - <span> " + json.branchName + "</span></li>");
                     console.log("success"); // another sanity check
                 },
 
                 // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                error: function (xhr, errmsg, err) {
+                    $('#errors').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                         " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
@@ -133,13 +153,153 @@
 
         };
 
-        $("#modal-form").on('submit', function(event){
+        $("#modal-form").on('submit', function (event) {
             event.preventDefault();
             console.log("form submitted!")  // sanity check
             add_transaction();
         });
 
+        $(document).ready(() => {
+            getDataDefault()
+        })
+        function getDataDefault(){
+            $.get("{% url 'bin_bank:show_transaction' %}", function (data) {
+                let container = document.getElementById("card-list")
+                container.innerHTML = "";
+                if (data.length === 0) {
 
+                }else{
+                    data.forEach(element => {
+                        let fields = element.fields
+                        let user = fields.user
+                        let date = fields.date
+                        let amountKg = fields.amountKg
+                        let branchName = fields.branchName
+                        let isFinished = fields.isFinished
+
+                        let card = document.createElement("div")
+                        card.className = "card mb-3 py-0"
+
+                        let cardContent = document.createElement("div")
+                        cardContent.className = "row g-0 d-flex align-items-center justify-content-center"
+
+                        let cardBody = document.createElement("div")
+                        cardBody.className = "card-body py-5 px-md-5"
+
+
+                        if (amountKg>maxKg) {
+                            maxKg = amountKg
+                        }
+                        let cardHeader = document.createElement("h2")
+                        cardHeader.className = "card-title"
+                        cardHeader.innerHTML = amountKg+ " Kg" + " (" + date.substring(0,date.indexOf("T")) + ")"
+
+                        let cardText = document.createElement("p")
+                        cardText.className = "card-text"
+                        cardText.innerHTML = "Cabang: " + branchName
+
+                        let cardStatus = document.createElement("h5")
+
+                        cardStatus.id = "cardStatus" + element.pk
+                        cardStatus.className = "card-text"
+                        cardStatus.innerHTML = (isFinished) ? 'Berhasil' : 'Sedang Berlangsung'
+                        let buttonUpdate = document.createElement("button")
+
+
+                        cardBody.appendChild(cardHeader)
+                        cardBody.appendChild(cardText)
+                        cardBody.appendChild(cardStatus)
+
+                        if (!isFinished) {
+                            buttonUpdate.className = "btn btn-main"
+                            buttonUpdate.onclick = function () {
+                                updateTransaction(element.pk)
+                            };
+                            buttonUpdate.innerHTML = "Selesaikan Transaksi"
+                            buttonUpdate.id = element.pk
+                            cardBody.appendChild(buttonUpdate)
+                        }
+
+                        cardContent.appendChild(cardBody)
+                        card.appendChild(cardContent)
+                        container.appendChild(card)
+
+                        //document.body.appendChild(container)
+
+                    })
+                }
+            })
+        }
+
+        function showDefault(data){
+
+            var container = document.getElementById("containerMain")
+            container.innerHTML = ""
+
+            if (data.length == 0) {
+                showNodata()
+                return
+            }
+            data.forEach(element => {
+                var fields = element.fields
+                var user = fields.user
+                var date = fields.date
+                var amountKg = fields.amountKg
+                var branchName = fields.branchName
+                var isFinished = fields.isFinished
+
+                var card = document.createElement("div")
+                card.className = "card mb-3 py-0"
+
+                var cardContent = document.createElement("div")
+                cardContent.className = "row g-0 d-flex align-items-center justify-content-center"
+
+                var cardBody = document.createElement("div")
+                cardBody.className = "card-body py-5 px-md-5"
+
+
+                if (amountKg>maxKg) {
+                    maxKg = amountKg
+                }
+                var cardHeader = document.createElement("h2")
+                cardHeader.className = "card-title"
+                cardHeader.innerHTML = amountKg+ " Kg" + " (" + date.substring(0,date.indexOf("T")) + ")"
+
+                var cardText = document.createElement("p")
+                cardText.className = "card-text"
+                cardText.innerHTML = "Cabang: " + branchName
+
+                var cardStatus = document.createElement("h5")
+
+                cardStatus.id = "cardStatus" + element.pk
+                cardStatus.className = "card-text"
+                cardStatus.innerHTML = (isFinished) ? 'Berhasil' : 'Sedang Berlangsung'
+                var buttonUpdate = document.createElement("button")
+
+
+                cardBody.appendChild(cardHeader)
+                cardBody.appendChild(cardText)
+                cardBody.appendChild(cardStatus)
+
+                if (!isFinished) {
+                    buttonUpdate.className = "btn btn-main"
+                    buttonUpdate.onclick = function () {
+                        updateTransaction(element.pk)
+                    };
+                    buttonUpdate.innerHTML = "Selesaikan Transaksi"
+                    buttonUpdate.id = element.pk
+                    cardBody.appendChild(buttonUpdate)
+                }
+
+                cardContent.appendChild(cardBody)
+                card.appendChild(cardContent)
+                container.appendChild(card)
+
+                //document.body.appendChild(container)
+
+            })
+        }
 
     </script>
+
 {% endblock content %}
