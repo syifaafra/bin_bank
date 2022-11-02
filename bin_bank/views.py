@@ -99,7 +99,7 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('bin_bank:login')
+    return redirect('bin_bank:homepage')
 
 
 @login_required(login_url='/login/')
@@ -183,11 +183,11 @@ def add_transaction(request):
         response_data['isFinished'] = transaction.isFinished
 
         return HttpResponse(
-            serializers.serialize("json", transaction), content_type="application/json"
+            serializers.serialize("json", transaction), content_type="application/json"  # type: ignore
         )
     else:
         return HttpResponse(
-            serializers.serialize("json", {"nothing to see": "Something happened"}), content_type="application/json"
+            serializers.serialize("json", {"nothing to see": "Something happened"}), content_type="application/json"  # type: ignore
         )
 
 
