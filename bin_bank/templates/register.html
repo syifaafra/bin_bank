@@ -1,25 +1,37 @@
 {% extends 'base.html' %}
 
 {% block meta %}
-<title>Leaderboard</title>
+  <title>Register</title>
 {% endblock meta %}
 
 {% block content %}
     {% include 'navbar.html' %}
+  
   <body>
+    
     <div class="container" style="margin-top: 50px">
+      <div class="container text-black text-center">
+        <div class="row">
+            <div class="col-12">
+                    <p class="display-5">REGISTER</p>
+            </div>
+        </div>
+    </div>
       <div class="row">
-        <div class="col-md-5 offset-md-3">
+        <div class="col-md-6 offset-md-3">
           <div class="card">
             <div class="card-body">
+              <form method="POST" action="" id="Register">
                 <table>  
                     <!-- membuat form -->
-                    {{ form.as_table }}  
+                    
+                      {{ form.as_table }}  
                     <tr>  
                         <td></td>
                         <button class="btn btn-register btn-block btn-success">REGISTER</button>
                     </tr>  
                 </table>
+              </form>
             </div>
           </div>
 
@@ -39,7 +51,6 @@
       $(document).ready(function() {
 
         $(".btn-register").click( function() {
-        
           var username = $("#username").val();
           var password = $("#password").val();
 
@@ -63,16 +74,10 @@
 
             //ajax
             $.ajax({
-
-              url: "simpan-register.php",
-              type: "POST",
-              data: {
-                  "username": username,
-                  "password": password
-              },
-
+                type: 'POST',
+                url: '',
+                data: $("#Register").serialize(), 
               success:function(response){
-
                 if (response == "success") {
 
                   Swal.fire({

@@ -7,76 +7,67 @@
 
 
 {% block content %}
-{% include 'navbar.html' %}
 <!-- Section: Design Block -->
-<section class="text-center text-lg-start">
-  <style>
-    .rounded-t-5 {
-      border-top-left-radius: 0.5rem;
-      border-top-right-radius: 0.5rem;
-    }
+<body style= "padding-top: 100px"data-bs-spy="scroll" data-bs-target=".navbar">
+  
+{% include 'navbar.html' %}
+  <h1 class="text-center">Cari Transaksi</h1>
+  <link rel="stylesheet" href="{% static 'bin_bank.css' %}"> 
+  
+    <div class="col-12 section-intro text-center">
+      <form method="POST" action="" id="searchtransaction">
+        <div>
+          <div class="divider"></div>
+        </div>
+        <div class="col-12 section-intro text-center">    
+          <h5>Berdasarkan Cabang</h5>  
+          {% csrf_token %}
+          {{form.branchName}}
+          
+          {{ formset.non_form_errors }}
 
-    @media (min-width: 992px) {
-      .rounded-tr-lg-0 {
-        border-top-right-radius: 0;
-      }
+          {% if form.amountKg.errors %}
+          <span class="text-danger">{{ form.amountKg.errors }} </span>
+          {% endif %} 
 
-      .rounded-bl-lg-5 {
-        border-bottom-left-radius: 0.5rem;
-      }
-    }
-    .card{
-      background-repeat: no-repeat;
-      background-position: right;
-      background-size: 80px;
-    }
-  </style> 
-    <form method="POST" action="" id="searchtransaction">
-      <h2>Cari Transaksi</h2>
-      {% csrf_token %}
-      {{form.as_p}}
-      <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Cari" id="carispesifikBtn">
-    </form>
-
-    <form method="POST" action="" id="filterTransaction">
-      {% csrf_token %}
-      <div class="form-outline mb-4">
-        <h5>Berdasarkan Berat</h5>
-        <label class="form-label" for="id_batasbawah"></label>
-        <input type="number" id="id_batasbawah" name="Min" min="0" placeholder="Minimal Kilogram"></input>
-        
-        {% if form.title.errors %}
-        <span class="text-danger">{{ form.title.errors }} </span>
-        {% endif %}  
-
-        <label class="form-label" for="id_batasatas"></label>
-        <input type="number" id="id_batasatas" name="Max" max="99999999999999" placeholder="Maksimal Kilogram"></input>
-        
-        {% if form.desc.errors %}
-        <span class="text-danger">{{ form.desc.errors }} </span>
-        {% endif %} 
-        
-      </div>
-    </form>
-
-    <div>
-      <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Cari" id="cariBtn">
-      <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Reset" id="resetBtn">
-    </div>
-
-    <div>
-      <div class="form-outline mb-4">
-        <h5>Berdasarkan Status</h5>
-        <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Semua" id="filterall">
-        <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Sedang Berlangsung" id="filterongoing">
-        <input type="submit" class="btn btn-outline-primary btn-sm mb-4" value="Berhasil" id="filtersucess">
-        
-      </div>
+          {% if form.branchName.errors %}
+            <span class="text-danger">{{ form.branchName.errors }} </span>
+          {% endif %} 
+        </div>
+        <div>
+          <input type="submit" class="btn btn-main" value="Cari" id="carispesifikBtn">
+        </div>
+      </form>
     </div>
     
-    <div class="container py-5 h-100"></div> 
+    <div class="col-12 section-intro text-center">
+      <form method="POST" action="" id="filterTransaction">
+        {% csrf_token %}
+        <div class="col-12 section-intro text-center">
+          <h5>Berdasarkan Berat</h5>
+          <label class="form-label" for="id_batasbawah" ></label>
+          <input type="number" id="id_batasbawah" name="Min" min="0" placeholder="Minimal Kilogram"></input>
+          
+          <label class="form-label" for="id_batasatas"></label>
+          <input type="number" id="id_batasatas" name="Max" max="99999999999999" placeholder="Maksimal Kilogram"></input>
+        </div> 
+        <div class="text-center">
+          <input type="submit" class="btn btn-main" value="Cari" id="cariBtn">
+          <input type="submit" class="btn btn-main" value="Reset" id="resetBtn">
+        </div>
+      </form>
+    </div>
+   
   
 
+    <div class="col-12 section-intro text-center">
+        <h5>Berdasarkan Status</h5>
+        <input type="submit" class="btn btn-main" value="Semua" id="filterall">
+        <input type="submit" class="btn btn-main" value="Sedang Berlangsung" id="filterongoing">
+        <input type="submit" class="btn btn-main" value="Berhasil" id="filtersucess">
+    </div>
+    <div class="col-11 section-intro text-center mx-auto" id="containerMain"></div> 
+    
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" 
     integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
     crossorigin="anonymous">
@@ -86,6 +77,7 @@
   <script>
     var maxKg = 0
     $(document).ready(() => {
+      $("#id_branchName")[0].placeholder="Nama Cabang"
       $("#cariBtn").click(setrange)
       $("#carispesifikBtn").click(getDataSpecific)
       $("#filterongoing").click(getDataOngoing)
@@ -95,6 +87,21 @@
       getDataDefault()
     })
 
+    function updateTransaction(id) {
+      $.ajax({
+        type: 'POST',
+        url: '/update-transaction/'+ id,
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        },
+        success: () => {
+          $("#"+id).remove()
+          $("#cardStatus"+id)[0].innerHTML = "Berhasil"
+        }
+        });
+    }
+
+
     function getDataSpecific(e) {
       e.preventDefault()
       $.ajax({
@@ -102,10 +109,12 @@
         url: '/json/search/',
         data: $("#searchtransaction").serialize(), 
         success: function(data) {
+            console.log(data)
             showDefault(data)
+            
           },
           dataType: 'json'
-        });
+        })
     }
 
     function resetRangeFilter(e){
@@ -156,6 +165,7 @@
       if (batasAtas.value==""){
         batasAtas.value = maxKg
       }
+
       $.ajax({
         type: 'POST',
         url: '/json/range/',
@@ -168,26 +178,29 @@
       
     }
 
+    function showNodata(){
+      var container = document.getElementById("containerMain")
+      container.innerHTML = ""
+      var messageTitle = document.createElement("h2")
+      messageTitle.innerHTML = "Oops, nggak ada transaksi yang sesuai filter"
+
+      var message = document.createElement("h5")
+      message.innerHTML = "Coba reset atau ubah filter kamu, ya."
+      
+      container.appendChild(messageTitle)
+      container.appendChild(message)
+    }
+
     function showDefault(data){
-      var container = document.getElementsByClassName("container py-5 h-100")[0]
+      
+      var container = document.getElementById("containerMain")
       container.innerHTML = ""
       
       if (data.length == 0) {
-        var cardHeader = document.createElement("h2")
-        cardHeader.innerHTML = "Tidak transaksi yang sesuai"
-        container.appendChild(cardHeader)
+        showNodata()
         return
       }
       data.forEach(element => {
-        var card = document.createElement("div")
-        card.className = "card mb-3 py-0"
-        
-        var cardContent = document.createElement("div")
-        cardContent.className = "row g-0 d-flex align-items-center justify-content-center"
-        
-        var cardBody = document.createElement("div")
-        cardBody.className = "card-body py-5 px-md-5"
-      
         var fields = element.fields
         var user = fields.user 
         var date = fields.date 
@@ -195,6 +208,16 @@
         var branchName = fields.branchName 
         var isFinished = fields.isFinished 
 
+        var card = document.createElement("div")
+        card.className = "card mb-3 py-0"
+
+        var cardContent = document.createElement("div")
+        cardContent.className = "row g-0 d-flex align-items-center justify-content-center"
+        
+        var cardBody = document.createElement("div")
+        cardBody.className = "card-body py-5 px-md-5"
+      
+        
         if (amountKg>maxKg) {
           maxKg = amountKg
         }
@@ -207,19 +230,26 @@
         cardText.innerHTML = "Cabang: " + branchName
         
         var cardStatus = document.createElement("h5")
+        
+        cardStatus.id = "cardStatus" + element.pk
         cardStatus.className = "card-text"
         cardStatus.innerHTML = (isFinished) ? 'Berhasil' : 'Sedang Berlangsung' 
-        var buttonUpdate = document.createElement("a")
-        if (!isFinished) {
-          buttonUpdate.href = "/update-transaction/" + element.pk
-          buttonUpdate.className = "btn btn-primary"
-          buttonUpdate.innerHTML = "Selesaikan Transaksi"
-        }
+        var buttonUpdate = document.createElement("button")
+        
         
         cardBody.appendChild(cardHeader)
         cardBody.appendChild(cardText)
         cardBody.appendChild(cardStatus)
-        cardBody.appendChild(buttonUpdate)
+        
+        if (!isFinished) {
+          buttonUpdate.className = "btn btn-main"
+          buttonUpdate.onclick = function () {
+            updateTransaction(element.pk)
+          };
+          buttonUpdate.innerHTML = "Selesaikan Transaksi"
+          buttonUpdate.id = element.pk
+          cardBody.appendChild(buttonUpdate)
+        }
 
         cardContent.appendChild(cardBody)
         card.appendChild(cardContent)
@@ -228,16 +258,25 @@
         //document.body.appendChild(container)
         
       })
-
-      
     }
-
-    
-    
-    
-      
-
   </script>
-
-</section>
+<footer class="py-4">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-6">
+              <p class="mb-0">Copyright © 2022. Bin Bank</p>
+          </div>
+          <div class="col-md-6 text-md-end">
+              <div>
+                  <a href="#"><i class="bx bxl-facebook-circle"></i></a>
+                  <a href="#"><i class="bx bxl-twitter"></i></a>
+                  <a href="#"><i class="bx bxl-dribbble"></i></a>
+                  <a href="#"><i class="bx bxl-instagram"></i></a>
+                  <a href="#"><i class="bx bxl-github"></i></a>
+              </div>
+          </div>
+      </div>
+  </div>
+</footer>
+</body>
 {% endblock content %}

@@ -86,3 +86,8 @@ class Feedback(models.Model):
     date = models.DateField(default=timezone.now)
     subject = models.CharField(max_length=255)
     feedback = models.TextField()
+
+class SupportMessage(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    date = models.DateField(auto_now=True)
+    message = models.TextField()

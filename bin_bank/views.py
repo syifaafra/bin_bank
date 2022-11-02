@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.core import serializers
@@ -7,11 +9,16 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
-from bin_bank.models import Article, Feedback, MyUser, Transaction
+from bin_bank.models import Article, Feedback, MyUser, SupportMessage, Transaction
 from django.views.decorators.csrf import csrf_exempt
-from bin_bank.forms import RegisterForm
+from bin_bank.forms import RegisterForm, SupportMessageForm
 from bin_bank.forms import FeedbackForm, RegisterForm, FindTransactionForm
 from django.views.decorators.csrf import csrf_exempt
+
+from django.views.generic.edit import CreateView
+from django.contrib.auth.forms import UserCreationForm
+
+
 
 
 @csrf_exempt
@@ -46,7 +53,7 @@ def homepage(request):
     context = {
         'username': username,
         'shared_story': total_feedback,
-        'waste_collected': total_waste, 
+        'waste_collected': total_waste,
         'articles': data_article,
         'feedbacks': data_feedback
     }
@@ -55,6 +62,7 @@ def homepage(request):
 
 @login_required(login_url='/login/')
 def add_feedback(request):
+<<<<<<< HEAD
     username = request.user.username
     if request.method == "POST":
         form = FeedbackForm(request.POST)
@@ -71,6 +79,21 @@ def add_feedback(request):
     
     context = {'form':form, 'username':username}
     return render(request, "feedback.html", context)
+=======
+    if request.method == 'POST':
+        feedback = request.POST.get("feedback")
+        name = request.POST.get("name")
+        if name == "":
+            new_feedback = Feedback(feedback=feedback, name="ANONYM")
+        else:
+            new_feedback = Feedback(feedback=feedback, name=name)
+        new_feedback.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+>>>>>>> b42ed1ddc6a9872922e3d465a77f9134fca0f57e
+
 
 # Fungsi untuk mengembalikan seluruh data task dalam bentuk JSON
 def show_feedback_json(request):
@@ -97,18 +120,18 @@ def logout_user(request):
     return redirect('bin_bank:homepage')
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_history(request):
-    # context = {
-    #     'username': request.user.username,
-    #     'last_login': request.COOKIES['last_login'],
-    # }
+    # TODO: Sessions
     form = FindTransactionForm()
-    context = {'form': form}
+    context = {
+        'username': request.user.username,
+        'form': form
+    }
     return render(request, "history.html", context)
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def update_transaction(request, id):
     transaction_list = Transaction.objects.filter(id=id)
     transaction = transaction_list[0]
@@ -117,72 +140,73 @@ def update_transaction(request, id):
     return redirect('bin_bank:show_history')
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user(request):
     transactions = Transaction.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_ongoing(request):
-    transactions = Transaction.objects.filter(isFinished=False)  # TODO: Add filter user
+    transactions = Transaction.objects.filter(user=request.user, isFinished=False)  
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_success(request):
-    transactions = Transaction.objects.filter(isFinished=True)  # TODO: Add filter user
+    transactions = Transaction.objects.filter(user=request.user, isFinished=True)  
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
-
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
-        # transaction = Transaction(
-        #     amountKg = 4,
-        #     branchName = "New York"
-        # )
-        # transaction.save()
         transactions = Transaction.objects.filter(
-            amountKg__range=(request.POST["Min"], request.POST["Max"]))  # TODO: Add filter user
+            user=request.user, 
+            amountKg__range=(request.POST["Min"], 
+            request.POST["Max"]))  
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method", status_code=405)
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_specific(request):
-    print(request)
     form = FindTransactionForm(request.POST)
     if form.is_valid():
         form = form.save(commit=False)
-        transactions = Transaction.objects.filter(amountKg=form.amountKg,
-                                                  branchName=form.branchName)  # TODO: Add filter user
+        transactions = Transaction.objects.filter(user=request.user, branchName = form.branchName)
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method")
 
-
+@login_required(login_url='/login/')
 def deposit_sampah(request):
     return render(request, "deposit_sampah.html")
 
-
+@login_required(login_url='/login/')
 def add_transaction(request):
-    if request.method != 'POST':
-        return redirect('bin_bank:deposit_sampah')
+    if request.method == 'POST':
+        amountKg = request.POST.get('amountKg')
+        branchName = request.POST.get('branchName')
+        response_data = {}
 
-    form = request.POST
-    if form.is_valid():
-        new_transaction = form.save(commit=False)
-        new_transaction.user = request.user
-        new_transaction.save()
-        form.save_m2m()
-        return JsonResponse({
-            'user': new_transaction.user,
-            'pk': new_transaction.pk,
-            'date': new_transaction.date,
-            'amountKg': new_transaction.amountKg,
-            'branchName': new_transaction.branchName,
-            'isFinished': new_transaction.isFinished,
-        })
+        transaction = Transaction(amountKg=amountKg, branchName=branchName, user=request.user)
+        transaction.save()
+
+        response_data['result'] = 'Create post successful!'
+        response_data['username'] = transaction.user.username
+        response_data['pk'] = transaction.pk
+        response_data['amountKg'] = transaction.amountKg
+        response_data['branchName'] = transaction.branchName
+        response_data['isFinished'] = transaction.isFinished
+
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type="application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )
 
 
 def show_leaderboard(request):
@@ -191,5 +215,77 @@ def show_leaderboard(request):
 
 
 def leaderboard(request):
-    context = {'username':request.user.username}
+    form = SupportMessageForm
+    context = {
+        'username': request.user.username,
+        'form': form,
+    }
+    if request.user.username != "":
+        context['point'] = request.user.points
     return render(request, "leaderboard.html", context)
+
+
+@csrf_exempt
+def find_username(request, username):
+    if request.method == 'POST':
+        username = request.POST.get("textinput")
+        if username=="":
+            return redirect('../cari')
+        return redirect('../cari/'+username)
+    user_data = MyUser.objects.all().order_by('-points')
+    rank = 1
+    is_found = False
+    context = {'username':request.user.username}
+
+    for user in user_data:
+        if user.is_admin:
+            continue
+        if user.username == username:
+            is_found = True
+            break
+        rank += 1
+    
+    context["searched_user"] = username
+    context["is_found"] = False
+
+    if is_found:
+        context["rank"] = rank
+        context["is_found"] = True
+
+    return render(request, "leaderboard_search.html", context)
+
+@csrf_exempt
+def find_username_menu(request):
+    if request.method == 'POST':
+        username = request.POST.get("textinput")
+        if username=="":
+            return redirect('../leaderboard/cari')
+        return redirect('cari/'+username)
+    context = {'is_found':"", "username":request.user.username}
+    return render(request, "leaderboard_search.html", context)
+
+
+def show_support_message(request):
+    message_data = SupportMessage.objects.all().order_by('?')[:12]
+    data = []
+    for item in message_data:
+        data.append({
+            'username': item.user.username,
+            'date': item.date,
+            'message': item.message
+        })
+    data = {'data': data}
+    return JsonResponse(data)
+
+
+def add_support_message(request):
+    if request.method == 'POST':
+        user = request.user
+        message = request.POST.get("message")
+
+        new_message = SupportMessage(user=user, message=message)
+        new_message.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
