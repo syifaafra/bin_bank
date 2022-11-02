@@ -50,7 +50,7 @@ class AddTransactionForm(ModelForm):
         model = Transaction
         fields = [
             'amountKg',
-            'branchName'
+            'branchName',
         ]
 
 class SupportMessageForm(ModelForm):

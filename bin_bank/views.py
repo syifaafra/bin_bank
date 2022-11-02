@@ -157,23 +157,24 @@ def deposit_sampah(request):
 
 
 def add_transaction(request):
-    if request.method != 'POST':
-        return redirect('bin_bank:deposit_sampah')
-
-    form = request.POST
-    if form.is_valid():
-        new_transaction = form.save(commit=False)
-        new_transaction.user = request.user
-        new_transaction.save()
-        form.save_m2m()
-        return JsonResponse({
-            'user': new_transaction.user,
-            'pk': new_transaction.pk,
-            'date': new_transaction.date,
-            'amountKg': new_transaction.amountKg,
-            'branchName': new_transaction.branchName,
-            'isFinished': new_transaction.isFinished,
-        })
+    return redirect('bin_bank:deposit_sampah')
+    # if request.method != 'POST':
+    #     return redirect('bin_bank:deposit_sampah')
+    #
+    # form = request.POST
+    # if form.is_valid():
+    #     new_transaction = form.save(commit=False)
+    #     new_transaction.user = request.user
+    #     new_transaction.save()
+    #     form.save_m2m()
+    #     return JsonResponse({
+    #         'user': new_transaction.user,
+    #         'pk': new_transaction.pk,
+    #         'date': new_transaction.date,
+    #         'amountKg': new_transaction.amountKg,
+    #         'branchName': new_transaction.branchName,
+    #         'isFinished': new_transaction.isFinished,
+    #     })
 
 
 def show_leaderboard(request):
