@@ -1,11 +1,36 @@
-<section>
-    <div class="container">
-            <div class="row">
-                <div class="col-12 section-intro text-center">
-                    <h1>Cari user</h1>
-                    <div class="divider"></div>
-                    <p>Ketik</p>
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Leaderboard</title>
+{% endblock meta %}
+
+{% block content %}
+
+    {% include 'navbar.html' %}
+
+    <section>
+        <div class="container">
+                <div class="row">
+                    <div class="col-12 section-intro text-center">
+                        <h1>Cari user berdasarkan username</h1>
+                        <div class="divider"></div>
+                        {% if is_found == True %}
+                            <p>{{searched_user}} berada di peringkat {{rank}}</p>
+                        {% elif is_found == "" %}
+                        {% else %}
+                            <p>{{searched_user}} tidak ditemukan</p>
+                        {% endif %}
+                        
+                        <form method="POST">
+                            <input type="text" name="textinput">
+                            <div class="text-center">
+                                <br>
+                                <button id="findButton" class="btn btn-main" type="submit">Search</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
-    </div>
-</section>
+        </div>
+    </section>
+
+{% endblock content %}
