@@ -1,7 +1,9 @@
+import datetime
 import random
 from django.core.serializers import json
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.core import serializers
 
 from django.contrib import messages
@@ -89,8 +91,10 @@ def login_user(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            return redirect('bin_bank:homepage')
+            if user.is_active:
+                request.session.set_expiry(86400)
+                login(request, user)
+                return redirect('bin_bank:homepage')
         else:
             messages.info(request, 'Username atau Password salah!')
     context = {}
@@ -99,10 +103,10 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return redirect('bin_bank:homepage')
+    return redirect('bin_bank:homepage') #response
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_history(request):
     # context = {
     #     'username': request.user.username,
@@ -113,7 +117,7 @@ def show_history(request):
     return render(request, "history.html", context)
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def update_transaction(request, id):
     transaction_list = Transaction.objects.filter(id=id)
     transaction = transaction_list[0]
@@ -122,24 +126,24 @@ def update_transaction(request, id):
     return redirect('bin_bank:show_history')
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user(request):
     transactions = Transaction.objects.all() # TODO: Add filter user
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_ongoing(request):
     transactions = Transaction.objects.filter(isFinished=False)  # TODO: Add filter user
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_success(request):
     transactions = Transaction.objects.filter(isFinished=True)  # TODO: Add filter user
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
         # cities =("New","Los","Chicago","Houston","Phoenix","Philadelphia","San","San","Dallas","San","Austin","Jacksonville","Fort","Columbus","Charlotte","Indianapolis","San","Seattle","Denver","Washington","Nashville","Oklahoma","Boston","El","Portland","Las","Memphis","Detroit","Baltimore","Milwaukee","Albuquerque","Fresno","Tucson","Sacramento","Kansas","Mesa","Atlanta","Omaha","Colorado","Raleigh","Long","Virginia","Miami","Oakland","Minneapolis","Tulsa","Bakersfield","Wichita","Arlington","Aurora","Tampa","New","Cleveland","Honolulu","Anaheim","Louisville","Henderson","Lexington","Irvine","Stockton","Orlando","Corpus","Newark","Riverside","St","Cincinnati","San","Santa","Greensboro","Pittsburgh","Jersey","St","Lincoln","Durham","Anchorage","Plano","Chandler","Chula","Buffalo","Gilbert","Madison","Reno","North","Toledo","Fort","Irving","Lubbock","St","Laredo","Chesapeake","Winston","Glendale","Garland","Scottsdale","Arlington","Enterprise","Boise","Santa","Norfolk","Fremont","Spokane","Richmond","Baton","San","Tacoma","Spring","Hialeah","Huntsville","Modesto","Frisco","Des","Yonkers","Port","Moreno","Worcester","Rochester","Fontana","Columbus","Fayetteville","Sunrise","McKinney","Little","Augusta","Oxnard","Salt","Amarillo","Overland","Cape","Grand","Huntington","Sioux","Grand","Montgomery","Tallahassee","Birmingham","Peoria","Glendale","Vancouver","Providence","Knoxville","Brownsville","Akron","Newport","Fort","Mobile","Shreveport","Paradise","Tempe","Chattanooga","Cary","Eugene","Elk","Santa","Salem","Ontario","Aurora","Lancaster","Rancho","Oceanside","Fort","Pembroke","Clarksville","Palmdale","Garden","Springfield","Hayward","Salinas","Alexandria","Paterson","Murfreesboro","Bayamon","Sunnyvale","Kansas","Lakewood","Killeen","Corona","Bellevue","Springfield","Charleston","Hollywood","Roseville","Pasadena","Escondido","Pomona","Mesquite","Naperville","Joliet","Savannah","Jackson","Bridgeport","Syracuse","Surprise","Rockford","Torrance","Thornton","Kent","Fullerton","Denton","Visalia","McAllen")
@@ -155,7 +159,7 @@ def show_transaction_user_range(request):
     return HttpResponse("Invalid method", status_code=405)
 
 
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def show_transaction_user_specific(request):
     form = FindTransactionForm(request.POST)
     if form.is_valid():
