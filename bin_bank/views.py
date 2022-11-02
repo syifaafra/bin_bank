@@ -62,7 +62,6 @@ def homepage(request):
 
 @login_required(login_url='/login/')
 def add_feedback(request):
-<<<<<<< HEAD
     username = request.user.username
     if request.method == "POST":
         form = FeedbackForm(request.POST)
@@ -79,20 +78,6 @@ def add_feedback(request):
     
     context = {'form':form, 'username':username}
     return render(request, "feedback.html", context)
-=======
-    if request.method == 'POST':
-        feedback = request.POST.get("feedback")
-        name = request.POST.get("name")
-        if name == "":
-            new_feedback = Feedback(feedback=feedback, name="ANONYM")
-        else:
-            new_feedback = Feedback(feedback=feedback, name=name)
-        new_feedback.save()
-
-        return HttpResponse(b"CREATED", status=201)
-
-    return HttpResponseNotFound()
->>>>>>> b42ed1ddc6a9872922e3d465a77f9134fca0f57e
 
 
 # Fungsi untuk mengembalikan seluruh data task dalam bentuk JSON
