@@ -5,11 +5,24 @@
     <title>Deposit Sampah</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{% static 'js/csrf_ajax.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bin_bank.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
 
 {% endblock meta %}
 
 {% block content %}
+<style>
+    #footer {
+            position: fixed;
+            padding: 20px;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            background: linear-gradient(to right,#00e0fe, #1107fe);
+            color: #fff;
+        }
+</style>
     <body style="padding-top: 100px;" data-bs-spy="scroll" data-bs-target=".navbar">
 
     {# Navbar #}
@@ -99,8 +112,8 @@
 
 
     </ul>
-    </body>
-    <footer class="py-4">
+    
+    <div id = 'footer'>
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
@@ -108,17 +121,18 @@
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div>
-                        <a href="#"><i class="bx bxl-facebook-circle"></i></a>
-                        <a href="#"><i class="bx bxl-twitter"></i></a>
-                        <a href="#"><i class="bx bxl-dribbble"></i></a>
-                        <a href="#"><i class="bx bxl-instagram"></i></a>
-                        <a href="#"><i class="bx bxl-github"></i></a>
+                        <a href="#"><i style="color: #fff" class='bx bxl-facebook-circle'></i></a>
+                        <a href="#"><i style="color: #fff" class='bx bxl-twitter'></i></a>
+                        <a href="#"><i style="color: #fff" class='bx bxl-dribbble'></i></a>
+                        <a href="#"><i style="color: #fff" class='bx bxl-instagram'></i></a>
+                        <a href="#"><i style="color: #fff" class='bx bxl-github'></i></a>
                     </div>
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
 
+    </body>
 
 
     <script>

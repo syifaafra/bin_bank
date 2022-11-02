@@ -171,7 +171,8 @@ def show_transaction_user_specific(request):
 
 @login_required(login_url='/login/')
 def deposit_sampah(request):
-    return render(request, "deposit_sampah.html")
+    username = request.user.username
+    return render(request, "deposit_sampah.html", {'username':username})
 
 
 @login_required(login_url='/login/')
