@@ -1,7 +1,7 @@
 from django.urls import path
 from bin_bank.views import login_user, register, logout_user, show_transaction_user, show_transaction_user_ongoing, \
     show_transaction_user_success, update_transaction, show_history, show_transaction_user_range, leaderboard, \
-    show_leaderboard, show_support_message, add_support_message, add_transaction
+    show_leaderboard, show_support_message, add_support_message, add_transaction, find_username, find_username_menu
 from bin_bank.views import homepage, deposit_sampah, show_feedback_json, add_feedback, show_transaction_user_specific
 
 app_name = 'bin_bank'
@@ -11,6 +11,8 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('leaderboard/', leaderboard, name='leaderboard'),
     path('leaderboard/add-support-message', add_support_message, name='add_support_message'),
+    path('leaderboard/cari', find_username_menu, name='find_username_menu' ),
+    path('leaderboard/cari/<str:username>', find_username, name='find_username' ),  # type: ignore
     path('register/', register, name='register'),
     path('logout/', logout_user, name='logout'),
     path('history/', show_history, name='show_history'),

@@ -194,9 +194,51 @@ def leaderboard(request):
     form = SupportMessageForm
     context = {
         'username': request.user.username,
-        'form': form
+        'form': form,
     }
+    if request.user.username != "":
+        context['point'] = request.user.points
     return render(request, "leaderboard.html", context)
+
+
+@csrf_exempt
+def find_username(request, username):
+    if request.method == 'POST':
+        username = request.POST.get("textinput")
+        if username=="":
+            return redirect('../cari')
+        return redirect('../cari/'+username)
+    user_data = MyUser.objects.all().order_by('-points')
+    rank = 1
+    is_found = False
+    context = {'username':request.user.username}
+
+    for user in user_data:
+        if user.is_admin:
+            continue
+        if user.username == username:
+            is_found = True
+            break
+        rank += 1
+    
+    context["searched_user"] = username
+    context["is_found"] = False
+
+    if is_found:
+        context["rank"] = rank
+        context["is_found"] = True
+
+    return render(request, "leaderboard_search.html", context)
+
+@csrf_exempt
+def find_username_menu(request):
+    if request.method == 'POST':
+        username = request.POST.get("textinput")
+        if username=="":
+            return redirect('../leaderboard/cari')
+        return redirect('cari/'+username)
+    context = {'is_found':"", "username":request.user.username}
+    return render(request, "leaderboard_search.html", context)
 
 
 def show_support_message(request):
