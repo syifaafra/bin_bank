@@ -37,6 +37,16 @@ section {
     z-index: -1;
 }
 
+.btn-secondary {
+    background: linear-gradient(to right,#00e0fe, #1107fe);
+    border-radius: 100px;
+    border: none;
+    font-weight: 600;
+    color: #fff;
+    height: 45px;
+    margin-left: 10px;
+}
+
 .bg-cover {
     background-position: center;
     background-repeat: no-repeat;
@@ -69,28 +79,12 @@ section {
     transform: translateY(-5px);
 }
 
-.video-btn {
-    width: 60px;
-    height:60px;
-    background: linear-gradient(to right,#00e0fe, #1107fe);
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    color:#fff;
-    border-radius: 100px;
-}
-
-.video-btn i {
-    font-size: 32px;
-}
-
 .navbar {
     box-shadow: 0 12px 20px rgba(0,0,0,0.1);
 }
 
 .navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .show>.nav-link {
     background: -webkit-linear-gradient(#00e0fe, #1107fe);
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -130,11 +124,14 @@ section {
 
 .feature i {
     background: -webkit-linear-gradient(#00e0fe, #1107fe);
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 54px;
 }
 
+.date {
+    color: rgb(204, 204, 204);
+    font-size: small;
+}
 
 .review {
     box-shadow: 0 12px 12px rgba(0,0,0,0.1);
@@ -184,6 +181,10 @@ footer {
 
 footer a {
     color: #fff;
+}
+
+.card {
+    margin: 10px;
 }
 
 .box-area {
