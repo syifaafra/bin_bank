@@ -108,7 +108,6 @@ def show_history(request):
     form = FindTransactionForm()
     context = {
         'username': request.user.username,
-        'last_login': request.COOKIES['last_login'],
         'form': form
     }
     return render(request, "history.html", context)
