@@ -7,6 +7,7 @@
 {% block content %}
 {% include 'navbar.html' %}
 {% load static %}
+<link rel="stylesheet" href="{% static 'bin_bank.css' %}">
 <section class="main">
 	<div class="layer">
         <div class="container text-black text-center">
@@ -18,22 +19,22 @@
         </div>
         <form method="POST" action="">
             {% csrf_token %}
-            <div class="mx-auto card align-items-center mb-3 w-50 " >
+            <div class="mx-auto card align-items-center mb-3 w-50" style="background-color: black;" >
                 <div class="card-body">
                         <table>
                             <tr>
-                                <td>Username: </td>
+                                <td style="color: white;">Username: </td>
                                 <td><input type="text" name="username" placeholder="Username" class="form-control"></td>
                             </tr>
                                     
                             <tr>
-                                <td>Password: </td>
+                                <td style="color: white;">Password: </td>
                                 <td><input type="password" name="password" placeholder="Password" class="form-control"></td>
                             </tr>
 
                             <tr>
                                 <td></td>
-                                <td><input class="btn btn-main" type="submit" value="Login"></td>
+                                <td><input class="btn btn-main" type="submit" value="Login" style="margin-top: 30px; margin-left: 25%;" /></td>
                             </tr>
                         </table>
                 </div>
@@ -43,6 +44,7 @@
             Belum mempunyai akun? <a href="{% url 'bin_bank:register' %}">Buat Akun</a>
         </div>
        
+    <div class="text-center" style="margin-top: 15px">
     {% if messages %}
         <ul>
             {% for message in messages %}
@@ -50,6 +52,7 @@
             {% endfor %}
         </ul>
     {% endif %}     
+    </div>
         
      
 
