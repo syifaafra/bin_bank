@@ -82,8 +82,9 @@ class Article(models.Model):
     source = models.URLField()
 
 class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE, default=None)
     date = models.DateField(default=timezone.now)
-    name = models.CharField(max_length=255)
+    subject = models.CharField(max_length=255)
     feedback = models.TextField()
 
 class SupportMessage(models.Model):

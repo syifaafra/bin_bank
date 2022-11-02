@@ -41,6 +41,10 @@ def homepage(request):
     total_feedback = Feedback.objects.count()
     data_transaction = Transaction.objects.all()
     data_article = Article.objects.all()
+    if total_feedback > 4:
+        data_feedback = Feedback.objects.all()[:4]
+    else:
+        data_feedback = Feedback.objects.all()
 
     total_waste = 0
     for transaction in data_transaction:
@@ -51,12 +55,31 @@ def homepage(request):
         'shared_story': total_feedback,
         'waste_collected': total_waste,
         'articles': data_article,
+        'feedbacks': data_feedback
     }
 
     return render(request, 'homepage.html', context)
 
-
+@login_required(login_url='/login/')
 def add_feedback(request):
+<<<<<<< HEAD
+    username = request.user.username
+    if request.method == "POST":
+        form = FeedbackForm(request.POST)
+        if form.is_valid(): # Kondisi data pada field valid
+            new_feedback = Feedback(
+                user = request.user,
+                subject = form.cleaned_data['subject'], 
+                feedback = form.cleaned_data['feedback'],
+            )
+            new_feedback.save() # Menyimpan task ke database
+            return HttpResponse(b"CREATED", status=201)
+    else:
+        form = FeedbackForm()
+    
+    context = {'form':form, 'username':username}
+    return render(request, "feedback.html", context)
+=======
     if request.method == 'POST':
         feedback = request.POST.get("feedback")
         name = request.POST.get("name")
@@ -69,6 +92,7 @@ def add_feedback(request):
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
+>>>>>>> b42ed1ddc6a9872922e3d465a77f9134fca0f57e
 
 
 # Fungsi untuk mengembalikan seluruh data task dalam bentuk JSON
