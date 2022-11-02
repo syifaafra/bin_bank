@@ -120,6 +120,8 @@ def update_transaction(request, id):
     transaction = transaction_list[0]
     transaction.isFinished = True
     transaction.save()
+    request.user.points += transaction.amountKg
+    request.user.save()
     return redirect('bin_bank:show_history')
 
 
