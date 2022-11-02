@@ -22,7 +22,7 @@ Masalah sampah di Indonesia masih menjadi polemik hingga menjadi salah satu isu 
 
 **1. Home 		: Amanda Christie Tarigan**
 
-   -> Welcome, artikel, jumlah penerimaan sampah, location
+   -> Welcome, artikel, jumlah penerimaan sampah, location, feedback
 
 **2. Authentication	: Syifa Afra Kamila Mumtaz**
 
