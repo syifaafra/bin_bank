@@ -1,25 +1,18 @@
-import datetime
-import random
 import json
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseNotFound, JsonResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.core import serializers
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 from bin_bank.models import Article, Feedback, MyUser, SupportMessage, Transaction
-from django.views.decorators.csrf import csrf_exempt
-from bin_bank.forms import RegisterForm, SupportMessageForm
-from bin_bank.forms import FeedbackForm, RegisterForm, FindTransactionForm
-from django.views.decorators.csrf import csrf_exempt
+from bin_bank.forms import RegisterForm, SupportMessageForm,FeedbackForm, RegisterForm, FindTransactionForm
 
-from django.views.generic.edit import CreateView
-from django.contrib.auth.forms import UserCreationForm
+
 
 
 @csrf_exempt
@@ -86,7 +79,32 @@ def show_feedback_json(request):
     data_feedback = Feedback.objects.all()
     return HttpResponse(serializers.serialize('json', data_feedback), content_type='application/json')
 
+@csrf_exempt
+def login_user(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            auth_login(request, user)
+            # Redirect to a success page.
+            return JsonResponse({
+            "status": True,
+            "message": "Successfully Logged In!"
+            # Insert any extra data if you want to pass data to Flutter
+            }, status=200)
+        else:
+            return JsonResponse({
+            "status": False,
+            "message": "Failed to Login, Account Disabled."
+            }, status=401)
 
+    else:
+        return JsonResponse({
+        "status": False,
+        "message": "Failed to Login, check your email/password."
+        }, status=401)
+'''
 def login_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -101,7 +119,7 @@ def login_user(request):
             messages.info(request, 'Username atau Password salah!')
     context = {}
     return render(request, 'login.html', context)
-
+'''
 
 def logout_user(request):
     logout(request)
