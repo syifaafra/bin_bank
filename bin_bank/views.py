@@ -72,8 +72,7 @@ def ajax_login_user(request):
             "status": False,
             "message": "Failed to Login, check your email/password."
             }, status=401)
-    context = {}
-    return render(request, 'login.html', context)
+    
 
 def ajax_logout_user(request):
     logout(request)
