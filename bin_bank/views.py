@@ -12,8 +12,25 @@ from django.views.decorators.csrf import csrf_exempt
 from bin_bank.models import Article, Feedback, MyUser, SupportMessage, Transaction
 from bin_bank.forms import RegisterForm, SupportMessageForm,FeedbackForm, RegisterForm, FindTransactionForm
 
+# Fungsi Autentikasi
+@csrf_exempt
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            # Redirect to a success page.
+            return redirect('bin_bank:homepage')
+        else:
+            messages.info(request, 'Username atau Password salah!')
+    context = {}
+    return render(request, 'login.html', context)
 
-
+def logout_user(request):
+    logout(request)
+    return redirect('bin_bank:homepage') #response
 
 @csrf_exempt
 def register(request):
@@ -28,6 +45,75 @@ def register(request):
     context = {'form': form}
     return render(request, 'register.html', context)
 
+# Asynchronous JavaScript (AJAX) login, register, and logout view 
+@csrf_exempt
+def ajax_login_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                auth_login(request, user)
+                # Redirect to a success page.
+                return JsonResponse({
+                "status": True,
+                "message": "Successfully Logged In!"
+                # Insert any extra data if you want to pass data to Flutter
+                }, status=200)
+            else:
+                return JsonResponse({
+                "status": False,
+                "message": "Failed to Login, Account Disabled."
+                }, status=401)
+
+        else:
+            return JsonResponse({
+            "status": False,
+            "message": "Failed to Login, check your email/password."
+            }, status=401)
+    context = {}
+    return render(request, 'login.html', context)
+
+def ajax_logout_user(request):
+    logout(request)
+    if request.method == "POST":
+        return JsonResponse({
+        "status": True,
+        "message": "Successfully Logout"
+        # Insert any extra data if you want to pass data to Flutter
+        }, status=200)
+    else:
+        return JsonResponse({
+        "status": False,
+        "message": "Failed to Logout"
+        }, status=401)
+
+@csrf_exempt
+def ajax_register(request):
+    form = RegisterForm()
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Akun telah berhasil dibuat!')
+            return JsonResponse({
+            "status": True,
+            "message": "Successfully Register"
+            # Insert any extra data if you want to pass data to Flutter
+            }, status=200)
+        else :
+            error_register_form = form.errors
+
+            return JsonResponse({
+            "status": False,
+            "message": error_register_form.as_json()
+            }, status=401)
+    
+    return JsonResponse({
+            "status": False,
+            "message": "Register Fail"
+            }, status=401)
 
 # Fungsi untuk menampilkan homepage
 def homepage(request):
@@ -78,41 +164,6 @@ def add_feedback(request):
 def show_feedback_json(request):
     data_feedback = Feedback.objects.all()
     return HttpResponse(serializers.serialize('json', data_feedback), content_type='application/json')
-
-@csrf_exempt
-def login_user(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            auth_login(request, user)
-            # Redirect to a success page.
-            return redirect('bin_bank:homepage')
-        else:
-            messages.info(request, 'Username atau Password salah!')
-    context = {}
-    return render(request, 'login.html', context)
-'''
-def login_user(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                request.session.set_expiry(86400)
-                login(request, user)
-                return redirect('bin_bank:homepage')
-        else:
-            messages.info(request, 'Username atau Password salah!')
-    context = {}
-    return render(request, 'login.html', context)
-'''
-
-def logout_user(request):
-    logout(request)
-    return redirect('bin_bank:homepage') #response
 
 
 @login_required(login_url='/login/')

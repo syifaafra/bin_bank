@@ -1,5 +1,5 @@
 from django.urls import path
-from bin_bank.views import login_user, register, logout_user, show_transaction_user, show_transaction_user_ongoing, \
+from bin_bank.views import login_user, ajax_login_user, register, ajax_register, ajax_logout_user,logout_user, show_transaction_user, show_transaction_user_ongoing, \
     show_transaction_user_success, update_transaction, show_history, show_transaction_user_range, leaderboard, \
     show_leaderboard, show_support_message, add_support_message, add_transaction, find_username, find_username_menu, \
     show_transaction, delete_transaction
@@ -10,12 +10,15 @@ app_name = 'bin_bank'
 urlpatterns = [
     path('', homepage, name='homepage'),  # TODO : homepage
     path('login/', login_user, name='login'),
+    path('login/ajax', ajax_login_user, name='ajax_login_user'),
+    path('register/', register, name='register'),
+    path('register/ajax', ajax_register, name='ajax_register'),
+    path('logout/', logout_user, name='logout'),
+    path('logout/ajax', ajax_logout_user, name='ajax_logout_user'),
     path('leaderboard/', leaderboard, name='leaderboard'),
     path('leaderboard/add-support-message', add_support_message, name='add_support_message'),
     path('leaderboard/cari', find_username_menu, name='find_username_menu' ),
     path('leaderboard/cari/<str:username>', find_username, name='find_username' ),  # type: ignore
-    path('register/', register, name='register'),
-    path('logout/', logout_user, name='logout'),
     path('history/', show_history, name='show_history'),
     path('feedback-json/', show_feedback_json, name='show_feedback_json'),
     path('add-feedback/', add_feedback, name='add_feedback'),
