@@ -49,8 +49,6 @@ def register(request):
 @csrf_exempt
 def ajax_login_user(request):
     if request.method == 'POST':
-        return JsonResponse({
-                "request": request,})
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
