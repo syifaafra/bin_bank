@@ -86,25 +86,11 @@ def login_user(request):
         password = request.POST['password']
         user = authenticate(username=username, password=password)
         if user is not None:
-            if user.is_active:
-                auth_login(request, user)
-                # Redirect to a success page.
-                return JsonResponse({
-                "status": True,
-                "message": "Successfully Logged In!"
-                # Insert any extra data if you want to pass data to Flutter
-                }, status=200)
-            else:
-                return JsonResponse({
-                "status": False,
-                "message": "Failed to Login, Account Disabled."
-                }, status=401)
-
+            auth_login(request, user)
+            # Redirect to a success page.
+            return redirect('bin_bank:homepage')
         else:
-            return JsonResponse({
-            "status": False,
-            "message": "Failed to Login, check your email/password."
-            }, status=401)
+            messages.info(request, 'Username atau Password salah!')
     context = {}
     return render(request, 'login.html', context)
 '''
