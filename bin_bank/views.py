@@ -85,6 +85,9 @@ def show_feedback_json(request):
     data_feedback = Feedback.objects.all()
     return HttpResponse(serializers.serialize('json', data_feedback), content_type='application/json')
 
+def show_article_json(request):
+    data = Article.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def login_user(request):
     if request.method == 'POST':
