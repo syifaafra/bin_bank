@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from bin_bank.models import Article, Feedback, MyUser, SupportMessage, Transaction
 from bin_bank.forms import RegisterForm, SupportMessageForm,FeedbackForm, RegisterForm, FindTransactionForm
+from django.contrib.auth.models import User
 
 # Fungsi Autentikasi
 @csrf_exempt
@@ -354,3 +355,68 @@ def add_support_message(request):
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
+
+# Method untuk flutter
+@csrf_exempt
+def show_transaction_user_post(request):
+    if request.method == "POST":
+        user = MyUser.objects.filter(username=request.POST["user"])
+        transactions = Transaction.objects.filter(
+            user=user[0])
+        return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+    return HttpResponse("Invalid method", status_code=405)
+
+@csrf_exempt
+def show_transaction_user_ongoing_post(request):
+    if request.method == "POST":
+        user = MyUser.objects.filter(username=request.POST["user"])
+        transactions = Transaction.objects.filter(
+            user=user[0], isFinished=False)
+        return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+    return HttpResponse("Invalid method", status_code=405)
+
+@csrf_exempt
+def show_transaction_user_success_post(request):
+    if request.method == "POST":
+        user = MyUser.objects.filter(username=request.POST["user"])
+        transactions = Transaction.objects.filter(
+            user=user[0], isFinished=True)
+        return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+    return HttpResponse("Invalid method", status_code=405)
+
+@csrf_exempt
+def show_transaction_user_range_post(request):
+    if request.method == "POST":
+        user = MyUser.objects.filter(username=request.POST["user"])
+        transactions = Transaction.objects.filter(
+            user=user[0],
+            amountKg__range=(request.POST["Min"],
+                             request.POST["Max"]))
+        return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+    return HttpResponse("Invalid method", status_code=405)
+
+@csrf_exempt
+def show_transaction_user_branch_post(request):
+    if request.method == "POST":
+        user = MyUser.objects.filter(username=request.POST["user"])
+        transactions = Transaction.objects.filter(
+            user=user[0],
+            branchName=request.POST["branchName"])
+        return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+    return HttpResponse("Invalid method", status_code=405)
+
+@csrf_exempt
+def update_transaction_post(request):
+    user = MyUser.objects.filter(username=request.POST["user"])
+    user = user[0]
+    pk = int(request.POST['pk'])
+    transaction_list = Transaction.objects.filter(id=pk)
+    transaction = transaction_list[0]
+    transaction.isFinished = True
+    transaction.save()
+    user.points += transaction.amountKg
+    user.save()
+    return JsonResponse({
+    "status": True,
+    "message": "Successfully update!"
+    }, status=200)

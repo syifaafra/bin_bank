@@ -1,10 +1,5 @@
 from django.urls import path
-from bin_bank.views import login_user, ajax_login_user, register, ajax_register, ajax_logout_user,logout_user, show_transaction_user, show_transaction_user_ongoing, \
-    show_transaction_user_success, update_transaction, show_history, show_transaction_user_range, leaderboard, \
-    show_leaderboard, show_support_message, add_support_message, add_transaction, find_username, find_username_menu, \
-    show_transaction, delete_transaction
-from bin_bank.views import homepage, deposit_sampah, show_feedback_json, add_feedback, show_transaction_user_specific
-
+from bin_bank.views import *
 app_name = 'bin_bank'
 
 urlpatterns = [
@@ -23,8 +18,8 @@ urlpatterns = [
     path('feedback-json/', show_feedback_json, name='show_feedback_json'),
     path('add-feedback/', add_feedback, name='add_feedback'),
     path('json/', show_transaction_user, name='show_transaction_user'),
-    path('json/ongoing', show_transaction_user_ongoing, name='show_transaction_user_ongoing'),
-    path('json/success', show_transaction_user_success, name='show_transaction_user_success'),
+    path('json/ongoing/', show_transaction_user_ongoing, name='show_transaction_user_ongoing'),
+    path('json/success/', show_transaction_user_success, name='show_transaction_user_success'),
     path('json/range/', show_transaction_user_range, name='show_transaction_user_range'),
     path('json/search/', show_transaction_user_specific, name='show_transaction_user_specific'),
     path('json/leaderboard', show_leaderboard, name='show_leaderboard'),
@@ -34,5 +29,11 @@ urlpatterns = [
     path('deposit_sampah/add_transaction/', add_transaction, name='add_transaction'),
     path('deposit_sampah/show_transaction/', show_transaction, name='show_transaction'),
     path('deposit_sampah/delete_transaction/', delete_transaction, name='delete_transaction'),
+    path('json/post/', show_transaction_user_post, name='show_transaction_user_post'),
+    path('json/post/ongoing', show_transaction_user_ongoing_post, name='show_transaction_user_ongoing_post'),
+    path('json/post/success', show_transaction_user_success_post, name='show_transaction_user_success_post'),
+    path('json/post/range', show_transaction_user_range_post, name='show_transaction_user_range_post'),
+    path('json/post/branch', show_transaction_user_branch_post, name='show_transaction_user_branch_post'),
+    path('update-transaction-post/', update_transaction_post, name='update_transaction_post'),
 
 ]
