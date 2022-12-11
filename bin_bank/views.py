@@ -59,6 +59,7 @@ def ajax_login_user(request):
                 # Redirect to a success page.
                 return JsonResponse({
                 "status": True,
+                "username":username,
                 "message": "Successfully Logged In!"
                 # Insert any extra data if you want to pass data to Flutter
                 }, status=200)
