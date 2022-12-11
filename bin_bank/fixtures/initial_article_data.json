@@ -1,0 +1,42 @@
+[
+    {
+        "model":"bin_bank.article",
+        "pk":1,
+        "fields":{
+            "title":"E-waste management must get policy priority",
+            "intro":"UNPLANNED and unregulated disposal of electronic waste is increasingly becoming an environmental...",
+            "image": "",
+            "source": "https://www.newagebd.net/article/185103/e-waste-management-must-get-policy-priority"
+        }
+},
+{
+        "model":"bin_bank.article",
+        "pk":2,
+        "fields":{
+            "title":"How Australia is seeing a big shift on plastic waste",
+            "intro":"A range of single-use plastic, including straws, cutlery and micro beads in shampoo...",
+            "image": "",
+            "source": "https://www.bbc.com/news/world-australia-63451666"
+        }
+    },
+    {
+        "model":"bin_bank.article",
+        "pk":3,
+        "fields":{
+            "title":"How Can We Solve The Growing E-Waste Problem?",
+            "intro":"E-waste is not a new problem. It is been around since the early 2000s. However...",
+            "image": "",
+            "source": "https://eponline.com/articles/2022/10/26/how-can-we-solve.aspx"
+        }
+    },
+    {
+        "model":"bin_bank.article",
+        "pk":3,
+        "fields":{
+            "title":"Persoalan Sampah yang Membelit Kota Bandung",
+            "intro":"Sampah masih menjadi isu yang perlu diselesaikan bersama, mulai dari sektor pemerintah...",
+            "image": "",
+            "source": "https://www.detik.com/jabar/berita/d-6376879/persoalan-sampah-yang-membelit-kota-bandung"
+        }
+    }
+]
