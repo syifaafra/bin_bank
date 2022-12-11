@@ -12,6 +12,8 @@ from django.views.decorators.csrf import csrf_exempt
 from bin_bank.models import Article, Feedback, MyUser, SupportMessage, Transaction
 from bin_bank.forms import RegisterForm, SupportMessageForm,FeedbackForm, RegisterForm, FindTransactionForm
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 # Fungsi Autentikasi
 @csrf_exempt
@@ -75,10 +77,10 @@ def ajax_login_user(request):
             "message": "Failed to Login, check your email/password."
             }, status=401)
     
-# @login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def user_login_data(request):
-  user_data = User.objects.filter(id=request.user.id)
-  return HttpResponse(serializers.serialize('json', user_data), content_type="application/json")
+  login_user_data = User.objects.filter(id=request.user.id)
+  return HttpResponse(serializers.serialize('json', login_user_data), content_type="application/json")
 
 def ajax_logout_user(request):
     logout(request)
