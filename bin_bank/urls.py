@@ -4,6 +4,7 @@ app_name = 'bin_bank'
 
 urlpatterns = [
     path('', homepage, name='homepage'),  # TODO : homepage
+    path('json/user_login', user_login_data, name='user_login_data'),
     path('login/', login_user, name='login'),
     path('login/ajax', ajax_login_user, name='ajax_login_user'),
     path('register/', register, name='register'),

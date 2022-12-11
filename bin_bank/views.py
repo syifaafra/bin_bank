@@ -75,6 +75,10 @@ def ajax_login_user(request):
             "message": "Failed to Login, check your email/password."
             }, status=401)
     
+# @login_required(login_url='/login/')
+def user_login_data(request):
+  user_data = User.objects.filter(id=request.user.id)
+  return HttpResponse(serializers.serialize('json', user_data), content_type="application/json")
 
 def ajax_logout_user(request):
     logout(request)
