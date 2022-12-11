@@ -5,21 +5,32 @@ from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.core import serializers
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 from bin_bank.models import Article, Feedback, MyUser, SupportMessage, Transaction
-from django.views.decorators.csrf import csrf_exempt
-from bin_bank.forms import RegisterForm, SupportMessageForm
-from bin_bank.forms import FeedbackForm, RegisterForm, FindTransactionForm
-from django.views.decorators.csrf import csrf_exempt
+from bin_bank.forms import RegisterForm, SupportMessageForm,FeedbackForm, RegisterForm, FindTransactionForm
 
-from django.views.generic.edit import CreateView
-from django.contrib.auth.forms import UserCreationForm
+# Fungsi Autentikasi
+@csrf_exempt
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            # Redirect to a success page.
+            return redirect('bin_bank:homepage')
+        else:
+            messages.info(request, 'Username atau Password salah!')
+    context = {}
+    return render(request, 'login.html', context)
 
-
-
+def logout_user(request):
+    logout(request)
+    return redirect('bin_bank:homepage') #response
 
 @csrf_exempt
 def register(request):
@@ -34,6 +45,74 @@ def register(request):
     context = {'form': form}
     return render(request, 'register.html', context)
 
+# Asynchronous JavaScript (AJAX) login, register, and logout view 
+@csrf_exempt
+def ajax_login_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                auth_login(request, user)
+                # Redirect to a success page.
+                return JsonResponse({
+                "status": True,
+                "message": "Successfully Logged In!"
+                # Insert any extra data if you want to pass data to Flutter
+                }, status=200)
+            else:
+                return JsonResponse({
+                "status": False,
+                "message": "Failed to Login, Account Disabled."
+                }, status=401)
+
+        else:
+            return JsonResponse({
+            "status": False,
+            "message": "Failed to Login, check your email/password."
+            }, status=401)
+    
+
+def ajax_logout_user(request):
+    logout(request)
+    if request.method == "POST":
+        return JsonResponse({
+        "status": True,
+        "message": "Successfully Logout"
+        # Insert any extra data if you want to pass data to Flutter
+        }, status=200)
+    else:
+        return JsonResponse({
+        "status": False,
+        "message": "Failed to Logout"
+        }, status=401)
+
+@csrf_exempt
+def ajax_register(request):
+    form = RegisterForm()
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Akun telah berhasil dibuat!')
+            return JsonResponse({
+            "status": True,
+            "message": "Successfully Register"
+            # Insert any extra data if you want to pass data to Flutter
+            }, status=200)
+        else :
+            error_register_form = form.errors
+
+            return JsonResponse({
+            "status": False,
+            "message": error_register_form.as_json()
+            }, status=401)
+    
+    return JsonResponse({
+            "status": False,
+            "message": "Register Fail"
+            }, status=401)
 
 # Fungsi untuk menampilkan homepage
 def homepage(request):
@@ -89,25 +168,6 @@ def show_article_json(request):
     data = Article.objects.all()
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
-def login_user(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('bin_bank:homepage')
-        else:
-            messages.info(request, 'Username atau Password salah!')
-    context = {}
-    return render(request, 'login.html', context)
-
-
-def logout_user(request):
-    logout(request)
-    return redirect('bin_bank:homepage')
-
-
 @login_required(login_url='/login/')
 def show_history(request):
     # TODO: Sessions
@@ -125,6 +185,8 @@ def update_transaction(request, id):
     transaction = transaction_list[0]
     transaction.isFinished = True
     transaction.save()
+    request.user.points += transaction.amountKg
+    request.user.save()
     return redirect('bin_bank:show_history')
 
 
@@ -136,22 +198,23 @@ def show_transaction_user(request):
 
 @login_required(login_url='/login/')
 def show_transaction_user_ongoing(request):
-    transactions = Transaction.objects.filter(user=request.user, isFinished=False)  
+    transactions = Transaction.objects.filter(user=request.user, isFinished=False)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
 
 
 @login_required(login_url='/login/')
 def show_transaction_user_success(request):
-    transactions = Transaction.objects.filter(user=request.user, isFinished=True)  
+    transactions = Transaction.objects.filter(user=request.user, isFinished=True)
     return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+
 
 @login_required(login_url='/login/')
 def show_transaction_user_range(request):
     if request.method == "POST":
         transactions = Transaction.objects.filter(
-            user=request.user, 
-            amountKg__range=(request.POST["Min"], 
-            request.POST["Max"]))  
+            user=request.user,
+            amountKg__range=(request.POST["Min"],
+                             request.POST["Max"]))
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method", status_code=405)
 
@@ -161,13 +224,16 @@ def show_transaction_user_specific(request):
     form = FindTransactionForm(request.POST)
     if form.is_valid():
         form = form.save(commit=False)
-        transactions = Transaction.objects.filter(user=request.user, branchName = form.branchName)
+        transactions = Transaction.objects.filter(user=request.user, branchName=form.branchName)
         return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
     return HttpResponse("Invalid method")
 
+
 @login_required(login_url='/login/')
 def deposit_sampah(request):
-    return render(request, "deposit_sampah.html")
+    username = request.user.username
+    return render(request, "deposit_sampah.html", {'username':username})
+
 
 @login_required(login_url='/login/')
 def add_transaction(request):
@@ -179,9 +245,11 @@ def add_transaction(request):
         transaction = Transaction(amountKg=amountKg, branchName=branchName, user=request.user)
         transaction.save()
 
+
         response_data['result'] = 'Create post successful!'
         response_data['username'] = transaction.user.username
         response_data['pk'] = transaction.pk
+        response_data['date'] = transaction.date.strftime('%B %d, %Y %I:%M %p')
         response_data['amountKg'] = transaction.amountKg
         response_data['branchName'] = transaction.branchName
         response_data['isFinished'] = transaction.isFinished
@@ -196,6 +264,17 @@ def add_transaction(request):
             content_type="application/json"
         )
 
+
+@login_required(login_url='/login/')
+def show_transaction(request):
+    transactions = Transaction.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize("json", transactions), content_type="application/json")
+
+
+@login_required(login_url='/login/')
+def delete_transaction(request):
+    transactions = Transaction.objects.all().delete()
+    redirect('bin_bank:deposit_sampah')
 
 def show_leaderboard(request):
     user_data = MyUser.objects.all().order_by('-points')
@@ -217,13 +296,13 @@ def leaderboard(request):
 def find_username(request, username):
     if request.method == 'POST':
         username = request.POST.get("textinput")
-        if username=="":
+        if username == "":
             return redirect('../cari')
-        return redirect('../cari/'+username)
+        return redirect('../cari/' + username)
     user_data = MyUser.objects.all().order_by('-points')
     rank = 1
     is_found = False
-    context = {'username':request.user.username}
+    context = {'username': request.user.username}
 
     for user in user_data:
         if user.is_admin:
@@ -232,7 +311,7 @@ def find_username(request, username):
             is_found = True
             break
         rank += 1
-    
+
     context["searched_user"] = username
     context["is_found"] = False
 
@@ -242,14 +321,15 @@ def find_username(request, username):
 
     return render(request, "leaderboard_search.html", context)
 
+
 @csrf_exempt
 def find_username_menu(request):
     if request.method == 'POST':
         username = request.POST.get("textinput")
-        if username=="":
+        if username == "":
             return redirect('../leaderboard/cari')
-        return redirect('cari/'+username)
-    context = {'is_found':"", "username":request.user.username}
+        return redirect('cari/' + username)
+    context = {'is_found': "", "username": request.user.username}
     return render(request, "leaderboard_search.html", context)
 
 

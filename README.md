@@ -1,4 +1,5 @@
 # Tugas Kelompok Pemrograman Berbasis Platform UTS Kelompok D09 TA 2022-2023
+[![Deploy](https://github.com/syifaafra/bin_bank/actions/workflows/dpl.yml/badge.svg)](https://github.com/syifaafra/bin_bank/actions/workflows/dpl.yml)
 
 ## 👩🏻‍💻 Nama Anggota Kelompok 👨🏻‍💻
 
@@ -9,7 +10,7 @@
 - Amanda Christie Tarigan - 2106751322 
 
 ## 🌐 Tautan 🌐
-https://bin-bank-d09.herokuapp.com/
+https://bin-bank-pbp.up.railway.app
 
 ## 📜 Cerita Aplikasi 📜
 
@@ -21,7 +22,7 @@ Masalah sampah di Indonesia masih menjadi polemik hingga menjadi salah satu isu 
 
 **1. Home 		: Amanda Christie Tarigan**
 
-   -> Welcome, artikel, jumlah penerimaan sampah, location
+   -> Welcome, artikel, jumlah penerimaan sampah, location, feedback
 
 **2. Authentication	: Syifa Afra Kamila Mumtaz**
 
@@ -50,3 +51,5 @@ Masalah sampah di Indonesia masih menjadi polemik hingga menjadi salah satu isu 
 
 - Tidak perlu melakukan login
 - Hanya dapat mengakses home page
+
+test

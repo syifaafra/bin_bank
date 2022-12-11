@@ -5,45 +5,56 @@
     <title>Deposit Sampah</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{% static 'js/csrf_ajax.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bin_bank.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 
 
 {% endblock meta %}
 
 {% block content %}
+<style>
+    #footer {
+            position: fixed;
+            padding: 20px;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            background: linear-gradient(to right,#00e0fe, #1107fe);
+            color: #fff;
+        }
+</style>
+    <body style="padding-top: 100px;" data-bs-spy="scroll" data-bs-target=".navbar">
 
     {# Navbar #}
     {% include 'navbar.html' %}
 
     <h1 class="h1 p-2 m-2 fw-bold d-flex justify-content-center">Deposit Sampah</h1>
 
+
+    <div class="mt-2 col-md-8 mb-3 mx-auto">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Tanggal</th>
+                <th scope="col">Kontribusi</th>
+                <th scope="col">Cabang</th>
+                <th scope="col">Status</th>
+            </tr>
+            </thead>
+            <tbody id="card-list">
+            </tbody>
+        </table>
+    </div>
+
     <!-- Button trigger modal -->
     <div class="d-flex justify-content-center">
-        <button type="button" class="btn btn-primary btn-block mx-auto" data-bs-toggle="modal"
+        <button type="button" class="btn btn-primary mx-auto" data-bs-toggle="modal"
                 data-bs-target="#staticBackdrop">Add Task
         </button>
     </div>
 
+    <div id="errors"></div> <!-- errors go here -->
 
-{#    <form method="POST" action="./add_transaction/" class="form-create-task" id="modal-form">#}
-{#        {% csrf_token %}#}
-{#        <div class="form-group">#}
-{#            <label for="branchName" class="control-label">Branch</label>#}
-{##}
-{#            <select name="branchName" id="branchName" style="width: 100%;">#}
-{#                <option value="branch_1">branch_1</option>#}
-{#                <option value="branch_2">branch_2</option>#}
-{#                <option value="branch_3">branch_3</option>#}
-{#            </select>#}
-{#        </div>#}
-{#        <div class="form-group">#}
-{#            <label for="amountKg" class="control-label">Berat Sampah(Kg)</label>#}
-{##}
-{#            <input type="number" name="amountKg" placeholder="100" min="0" cols="40" rows="10"#}
-{#                   required="" id="amountKg" class="form-control text-body border-dark">#}
-{#        </div>#}
-{##}
-{#        <input type ="submit">#}
-{#    </form>#}
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -92,39 +103,63 @@
         </div>
     </div>
 
-    <div id="card-list">
 
-        {% comment %}
-        {% endcomment %}
 
-    </div>
+    </body>
+    <footer class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">Copyright © 2022. Bin Bank</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div>
+                        <a href="#"><i class="bx bxl-facebook-circle"></i></a>
+                        <a href="#"><i class="bx bxl-twitter"></i></a>
+                        <a href="#"><i class="bx bxl-dribbble"></i></a>
+                        <a href="#"><i class="bx bxl-instagram"></i></a>
+                        <a href="#"><i class="bx bxl-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
 
 
     <script>
         // Referensi
         // https://realpython.com/django-and-ajax-form-submissions/
+        function appendElement(fields){
+            $("#card-list").append(
+                `<tr>`+
+                `<td>${fields.date}</td>`+
+                `<td>${fields.amountKg}</td>` +
+                `<td>${fields.branchName}</td>` +
+                `<td>${fields.isFinished}</td>`+
+                `</tr>`);
+        }
 
         function add_transaction() {
             console.log("add transaction is working!") // sanity check
             $.ajax({
-                url : "./add_transaction/", // the endpoint
-                type : "POST", // http method
-                data : {
-                    amountKg : $('#amountKg').val(),
-                    branchName : $('#branchName').val(),
+                url: "./add_transaction/", // the endpoint
+                type: "POST", // http method
+                data: {
+                    amountKg: $('#amountKg').val(),
+                    branchName: $('#branchName').val(),
                 }, // data sent with the post request
 
                 // handle a successful response
-                success : function(json) {
-                    $('#amountKg').val('');
-                    $('#branchName').val('');// remove the value from the input
+                success: function (json) {
                     console.log(json); // log the returned json to the console
+                    appendElement(json)
                     console.log("success"); // another sanity check
                 },
 
                 // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                error: function (xhr, errmsg, err) {
+                    $('#errors').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
                         " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
                     console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
                 }
@@ -133,13 +168,35 @@
 
         };
 
-        $("#modal-form").on('submit', function(event){
+        $("#modal-form").on('submit', function (event) {
             event.preventDefault();
             console.log("form submitted!")  // sanity check
             add_transaction();
         });
 
+        $(document).ready(() => {
+            getDataDefault()
+        })
+
+        function getDataDefault() {
+            $.get("{% url 'bin_bank:show_transaction' %}", function (data) {
+                let container = document.getElementById("card-list")
+                container.innerHTML = "";
+                console.log(data)
+
+                if (data.length == 0) {
+
+                } else {
+                    data.forEach(element => {
+                        appendElement(element.fields)
+                    })
+                }
+            })
+        }
+
+
 
 
     </script>
+
 {% endblock content %}
