@@ -84,16 +84,16 @@ def user_login_data(request):
 
 def ajax_logout_user(request):
     logout(request)
-    if request.method == "POST":
+    try:
+        logout(request)
         return JsonResponse({
-        "status": True,
-        "message": "Successfully Logout"
-        # Insert any extra data if you want to pass data to Flutter
+            "status": True,
+            "message": "Successfully Logged out!",
         }, status=200)
-    else:
+    except:
         return JsonResponse({
-        "status": False,
-        "message": "Failed to Logout"
+          "status": False,
+          "message": "Failed to Logout"
         }, status=401)
 
 @csrf_exempt
