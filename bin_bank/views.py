@@ -83,7 +83,6 @@ def user_login_data(request):
   return HttpResponse(serializers.serialize('json', login_user_data), content_type="application/json")
 
 def ajax_logout_user(request):
-    logout(request)
     try:
         logout(request)
         return JsonResponse({
