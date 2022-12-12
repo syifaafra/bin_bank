@@ -387,9 +387,6 @@ def add_support_message(request):
 # For flutter
 @csrf_exempt
 def add_support_message_post(request):
-    print("\n\n\nlol\n\n\n")
-    print(request.POST)
-    print(request.POST['user'])
     if request.method == 'POST':
         user = MyUser.objects.filter(username=request.POST["user"])[0]
         message = request.POST.get("message")
