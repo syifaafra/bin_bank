@@ -32,6 +32,7 @@ urlpatterns = [
     path('deposit_sampah/', deposit_sampah, name='deposit_sampah'),
     path('deposit_sampah/add_transaction/', add_transaction, name='add_transaction'),
     path('deposit_sampah/add_transaction_post/', add_transaction_post, name='add_transaction_post'),
+    path('deposit_sampah/post_transaction_json/', post_transaction_json, name='post_transaction_json'),
     path('deposit_sampah/show_transaction/', show_transaction, name='show_transaction'),
     path('deposit_sampah/delete_transaction/', delete_transaction, name='delete_transaction'),
     path('json/post/', show_transaction_user_post, name='show_transaction_user_post'),

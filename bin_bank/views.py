@@ -477,3 +477,23 @@ def add_transaction_post(request):
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
+
+@csrf_exempt
+def post_transaction_json(request):
+    if request.method == "POST":
+        amountKg = request.POST["amountKg"]
+        branchName = request.POST["branchName"]
+        user = request.POST["user"]
+        user = MyUser.objects.filter(username=user)
+        user = user[0]
+        new_transaction = Feedback(
+            user = user,
+            amountKg = amountKg,
+            branchName = branchName,
+        )
+        new_transaction.save()
+        context = {'message': 'SUCCESS'}
+    else:
+        context = {'message': 'FAILED'}
+
+    return JsonResponse(context)
