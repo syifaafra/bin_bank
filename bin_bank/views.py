@@ -82,6 +82,7 @@ def user_login_data(request):
   login_user_data = User.objects.filter(id=request.user.id)
   return HttpResponse(serializers.serialize('json', login_user_data), content_type="application/json")
 
+@csrf_exempt
 def ajax_logout_user(request):
     try:
         logout(request)
