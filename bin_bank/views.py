@@ -166,15 +166,14 @@ def add_feedback(request):
     context = {'form':form, 'username':username}
     return render(request, "feedback.html", context)
 
-@login_required(login_url='/login/')
 @csrf_exempt
 def post_feedback_json(request):
-    username = request.user.username
     if request.method == "POST":
-        store = json.loads(request.body.decode('utf-8'))
-        subject = store['subject']
-        feedback = store['feedback']
-        user = request.user,
+        subject = request.POST["subject"]
+        feedback = request.POST["feedback"]
+        user = request.POST["user"]
+        user = MyUser.objects.filter(username=user)
+        user = user[0]
         new_feedback = Feedback(
                 user = user,
                 subject = subject,
