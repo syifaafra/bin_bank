@@ -463,3 +463,17 @@ def update_transaction_post(request):
     "status": True,
     "message": "Successfully update!"
     }, status=200)
+
+@csrf_exempt
+def add_transaction_post(request):
+    if request.method == 'POST':
+        user = MyUser.objects.filter(username=request.POST["user"])[0]
+        amountKg = request.POST.get("a")
+        branchName = request.POST.get('branchName')
+
+        transaction = Transaction(amountKg=amountKg, branchName=branchName, user=request.user)
+        transaction.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
