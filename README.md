@@ -1,6 +1,6 @@
 # Tugas Kelompok Pemrograman Berbasis Platform UTS Kelompok D09 TA 2022-2023
 [![Deploy](https://github.com/syifaafra/bin_bank/actions/workflows/dpl.yml/badge.svg)](https://github.com/syifaafra/bin_bank/actions/workflows/dpl.yml)
-
+[![Release](https://github.com/syifaafra/bin_bank/actions/workflows/release.yml/badge.svg)](https://github.com/syifaafra/bin_bank/actions/workflows/release.yml)
 ## 👩🏻‍💻 Nama Anggota Kelompok 👨🏻‍💻
 
 - Kausar Meutuwah - 2106630100
