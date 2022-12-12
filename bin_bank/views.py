@@ -366,6 +366,23 @@ def add_support_message(request):
 
     return HttpResponseNotFound()
 
+# For flutter
+@csrf_exempt
+def add_support_message_post(request):
+    print("\n\n\nlol\n\n\n")
+    print(request.POST)
+    print(request.POST['user'])
+    if request.method == 'POST':
+        user = MyUser.objects.filter(username=request.POST["user"])[0]
+        message = request.POST.get("message")
+
+        new_message = SupportMessage(user=user, message=message)
+        new_message.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()
+
 # Method untuk flutter
 @csrf_exempt
 def show_transaction_user_post(request):

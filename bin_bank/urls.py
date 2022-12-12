@@ -13,6 +13,7 @@ urlpatterns = [
     path('logout/ajax', ajax_logout_user, name='ajax_logout_user'),
     path('leaderboard/', leaderboard, name='leaderboard'),
     path('leaderboard/add-support-message', add_support_message, name='add_support_message'),
+    path('leaderboard/add-support-message-app', add_support_message_post, name='add_support_message_post'),
     path('leaderboard/cari', find_username_menu, name='find_username_menu' ),
     path('leaderboard/cari/<str:username>', find_username, name='find_username' ),  # type: ignore
     path('history/', show_history, name='show_history'),
