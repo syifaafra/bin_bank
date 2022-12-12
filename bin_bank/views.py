@@ -166,6 +166,24 @@ def add_feedback(request):
     context = {'form':form, 'username':username}
     return render(request, "feedback.html", context)
 
+@login_required(login_url='/login/')
+def post_feedback_json(request):
+    username = request.user.username
+    if request.method == "POST":
+        store = json.loads(request.body.decode('utf-8'))
+        subject = store['subject']
+        feedback = store['feedback']
+        new_feedback = Feedback(
+                user = request.user,
+                subject = subject,
+                feedback = feedback,
+        )
+        new_feedback.save()
+        context = {'message': 'SUCCESS'}
+    else:
+        context = {'message': 'FAILED'}
+
+    return JsonResponse(context)
 
 # Fungsi untuk mengembalikan seluruh data task dalam bentuk JSON
 def show_feedback_json(request):

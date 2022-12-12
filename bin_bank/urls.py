@@ -17,6 +17,7 @@ urlpatterns = [
     path('leaderboard/cari', find_username_menu, name='find_username_menu' ),
     path('leaderboard/cari/<str:username>', find_username, name='find_username' ),  # type: ignore
     path('history/', show_history, name='show_history'),
+    path('post-feedback-json/', post_feedback_json, name='post_feedback_json'),
     path('feedback-json/', show_feedback_json, name='show_feedback_json'),
     path('article-json/', show_article_json, name='show_article_json'),
     path('add-feedback/', add_feedback, name='add_feedback'),
