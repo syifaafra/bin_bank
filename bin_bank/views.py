@@ -468,10 +468,9 @@ def update_transaction_post(request):
 def add_transaction_post(request):
     if request.method == 'POST':
         user = MyUser.objects.filter(username=request.POST["user"])[0]
-        amountKg = request.POST.get("a")
-        branchName = request.POST.get('branchName')
-
-        transaction = Transaction(amountKg=amountKg, branchName=branchName, user=request.user)
+        amountKg = int(request.POST['amountKg'])
+        branchName = request.POST['branchName']
+        transaction = Transaction(amountKg=amountKg, branchName=branchName, user=user)
         transaction.save()
 
         return HttpResponse(b"CREATED", status=201)
